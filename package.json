@@ -1,0 +1,12 @@
+{
+  "name": "yandexcode-run",
+  "version": "1.0.0",
+  "description": "Решение задач с сайта CodeRun компании Яндекс https://coderun.yandex.ru/",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "Alexander Bykovskiy",
+  "license": "ISC"
+}
