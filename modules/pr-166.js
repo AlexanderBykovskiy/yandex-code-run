@@ -1,19 +1,16 @@
 module.exports = function (N, staff, K) {
-    let swapped;
-    do {
-        swapped = false;
-        staff.forEach((item, index) => {
-            if (item < staff[index + 1]) {
-                let temp = item;
-                staff[index] = staff[index + 1];
-                staff[index + 1] = temp;
-                swapped = true;
-            }
-        })
-    } while (swapped);
+    let biggest=25;
     let x = 0;
-    for(let i=0; i<K; i++) {
-        x+=staff[i];
+    let count = 0;
+    while ( biggest > 0 ) {
+        for (let i = 0; i < N; i++) {
+            if(staff[i] === biggest) {
+                x+=staff[i];
+                count++;
+                if (count === K) return x;
+            }
+        }
+        biggest--;
     }
     return x;
 }
