@@ -1,0 +1,30 @@
+div {
+    width: 90px;
+    height: 90px;
+    position: relative;
+    display: block;
+    background-color: #f7ebcc;
+    box-shadow: 90px 0 #654430, 0 90px #654430, 90px 90px #f7ebcc;
+}
+div:before {
+    position: absolute;
+    margin: 17px;
+    content: "";
+    width: 56px;
+    height: 56px;
+    background: radial-gradient(circle, #5f5d5e 20px, #252324 20px, #252324 23px, #5f5d5e 23px);
+    border-radius: 50%;
+}
+div:after {
+    position: absolute;
+    margin: 17px 17px;
+    left: 90px;
+    top: 90px;
+    content: "";
+    width: 56px;
+    height: 56px;
+    background: radial-gradient(circle, #5f5d5e 20px, #252324 20px, #252324 23px, #5f5d5e 23px);
+    border-radius: 50%;
+}
+
+
