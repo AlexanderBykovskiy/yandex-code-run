@@ -1,2 +1,2 @@
 # yandex-code-run
-Решение задач с сайта CodeRun компании Яндекс https://coderun.yandex.ru/
+Решение задач по фронтенду с сайта CodeRun компании Яндекс https://coderun.yandex.ru/
