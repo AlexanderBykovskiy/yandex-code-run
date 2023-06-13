@@ -83,7 +83,7 @@ a::after {
 
 img {
     /* ¯\_(ツ)_/¯ */
-    height: 80px;
+    display: block;
 
     width: 80px;
 }
