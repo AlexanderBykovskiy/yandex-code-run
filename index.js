@@ -5,44 +5,48 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-function calculateOperations(N) {
-    let operations = 0;
-    const sequence = [];
+function calculateOperations(n) {
 
-    let calc = N;
+    const operations = [];
 
-    while (calc > 0) {
+    console.log('*',Infinity + 1)
 
-        sequence.push(calc);
+    const dp = new Array(n + 1).fill(Infinity);
+    const result = new Array(n + 1).fill([]);
 
-        if (calc % 3 === 0) {
-            // console.log(calc, "/ 3 = ", calc/3);
-            calc /= 3;
-        } else if (calc % 2 === 0) {
-            // console.log(calc, "/ 2 = ", calc/2);
-            calc /= 2;
-        } else {
-            // console.log(calc, "- 1 = ", calc - 1);
-            calc -= 1;
+    dp[1] = 0;
+
+    for (let i = 1; i <= n; i++) {
+
+        dp[i] = Math.min(dp[i], dp[i - 1] + 1);
+        console.log(i, 'x2')
+
+        if (i * 2 <= n) {
+            dp[i * 2] = Math.min(dp[i * 2], dp[i] + 1);
+            console.log(i, 'x2')
         }
 
-        operations++;
+        if (i * 3 <= n) {
+            dp[i * 3] = Math.min(dp[i * 3], dp[i] + 1);
+            console.log(i, 'x3')
+        }
+
+        console.log('i ', i, 'dp', dp)
     }
+    return dp[n];
 
-    if (N >= 1)operations--;
-    sequence.reverse();
-
-    return {
-        operations: operations,
-        sequence: sequence
-    };
 }
 
 rl.question('', (N) => {
-    const result = calculateOperations(parseInt(N));
 
-    process.stdout.write(result.operations.toString() + '\n');
-    process.stdout.write(result.sequence.join(' '));
+    console.log('')
+
+    const minOperations = calculateOperations(parseInt(N));
+
+    console.log('')
+
+    process.stdout.write(minOperations.toString() + '\n');
+    // process.stdout.write(result.sequence.join(' '));
 
     rl.close();
 });
