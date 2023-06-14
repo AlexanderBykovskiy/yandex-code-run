@@ -5,38 +5,68 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-function calculateOperations(n) {
+function calculateOperations(N) {
 
-    const dp = new Array(n + 1).fill(Infinity);
+    let a = new Array(N + 1);
+    a[1] = 0;
 
-    dp[1] = 0;
+    let min;
+    for (let i = 2; i < N + 1; i++) {
+        min = a[i - 1] + 1;
+        if (i % 2 === 0) min = Math.min(min, a[i / 2] + 1);
+        if (i % 3 === 0) min = Math.min(min, a[i / 3] + 1);
 
-    for (let i = 1; i <= n; i++) {
-
-        dp[i] = Math.min(dp[i], dp[i - 1] + 1);
-
-        if (i * 2 <= n) {
-            dp[i * 2] = Math.min(dp[i * 2], dp[i] + 1);
-        }
-
-        if (i * 3 <= n) {
-            dp[i * 3] = Math.min(dp[i * 3], dp[i] + 1);
-        }
-
+        a[i] = min;
     }
-    return dp[n];
+
+    let ret = "";
+    let sum = [];
+
+    let i = N;
+    while (i > 1) {
+        if (a[i] === a[i - 1] + 1) {
+            ret = "+ 1 " + ret;
+            sum.unshift(1)
+            i--;
+            continue;
+        }
+
+        if (i % 2 === 0 && a[i] === a[i / 2] + 1) {
+            ret = "x 2 " + ret;
+            sum.unshift(2)
+            i /= 2;
+            continue;
+        }
+
+        ret = "x 3 " + ret;
+        sum.unshift(3)
+        i /= 3;
+    }
+
+    // console.log(a[N]);
+    // console.log("1 " + ret);
+    let num = 1;
+    let str = '1';
+    sum.forEach((item) => {
+        if (item === 1) {
+            num++;
+        } else if (item === 2) {
+            num*=2;
+        } else if (item === 3) {
+            num*=3;
+        }
+        str = str + ' ' + num;
+    })
+    //console.log(str);
+    return {count: a[N], str: str};
 }
 
 rl.question('', (N) => {
 
-    console.log('')
-
     const minOperations = calculateOperations(parseInt(N));
 
-    console.log('')
-
-    process.stdout.write(minOperations.toString() + '\n');
-    // process.stdout.write(result.sequence.join(' '));
+    process.stdout.write(minOperations.count.toString() + '\n');
+    process.stdout.write(minOperations.str);
 
     rl.close();
 });
