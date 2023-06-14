@@ -11,25 +11,25 @@ function calculateOperations(N) {
 
     let calc = N;
 
-    while (calc > 1) {
+    while (calc > 0) {
 
         sequence.push(calc);
 
         if (calc % 3 === 0) {
-            console.log(calc, "/ 3 = ", calc/3);
+            // console.log(calc, "/ 3 = ", calc/3);
             calc /= 3;
         } else if (calc % 2 === 0) {
-            console.log(calc, "/ 2 = ", calc/2);
+            // console.log(calc, "/ 2 = ", calc/2);
             calc /= 2;
         } else {
-            console.log(calc, "- 1 = ", calc - 1);
+            // console.log(calc, "- 1 = ", calc - 1);
             calc -= 1;
         }
 
         operations++;
     }
 
-    if (N !== 0) sequence.push(1);
+    if (N >= 1)operations--;
     sequence.reverse();
 
     return {
@@ -40,9 +40,6 @@ function calculateOperations(N) {
 
 rl.question('', (N) => {
     const result = calculateOperations(parseInt(N));
-
-    // console.log(result.operations);
-    // console.log(result.sequence.join(' '));
 
     process.stdout.write(result.operations.toString() + '\n');
     process.stdout.write(result.sequence.join(' '));
