@@ -16,7 +16,7 @@ console.log("\nt4:", dateFinder(test4));
 const test5 = "DUN 'Ej QAD Je TA'Goo 48 pAtLh TLhOQ 363563 PuS WoVBe' SICh HuD,";
 console.log("\nt5:", dateFinder(test5));
 
-const test6 = "ta'Qa 65444848";
+const test6 = "ta'Qa 0";
 console.log("\nt6:", dateFinder(test6));
 
 const test7 = "DUN 'Ej QAD Je TA'Goo pAtLh TLhOQ SICh HuD,";

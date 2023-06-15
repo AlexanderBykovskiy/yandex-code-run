@@ -1,7 +1,7 @@
 /** @returns string */
 module.exports = function(inputString) {
 
-    const pattern = /ta'((So|Ko|Ta|Qa|Goo) \d+)/i;
+    const pattern = /ta'((So|Ko|Ta|Qa|Goo) [1-9]\d+)/i;
 
     const result = inputString.match(pattern);
 
