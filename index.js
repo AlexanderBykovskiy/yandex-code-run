@@ -24,3 +24,6 @@ console.log("\nt7:", dateFinder(test7));
 
 const test8 = "DUN 'Ej QAD Je tA'ta 48 pAtLh TLhOQ Ta'tA 494 PuS WoVBe' SICh HuD,";
 console.log("\nt8:", dateFinder(test8));
+
+const test9 = "";
+console.log("\nt9:", dateFinder(test9));
