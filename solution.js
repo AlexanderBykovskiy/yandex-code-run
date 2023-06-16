@@ -21,7 +21,7 @@ for (let i=0; i<lines.length; i++) {
 let i = 0;
 const len = longPartia.length;
 const interval = setInterval(() => {
-    if (i > len) clearInterval(interval);
+    if (i >= len) clearInterval(interval);
     const item = longPartia[i];
     console.log(item);
     const index = lib.findIndex(libItem => item === libItem);
