@@ -14,6 +14,7 @@ describe('suite', function () {
     it.skip('test3', function () {
         // Some test 3
     });
-});`
+});
+`
 
 console.log("Test 1:", parser(test1));
