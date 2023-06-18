@@ -4,10 +4,6 @@ module.exports = function(content) {
     const endBlock = /^[ ]+\}\);/i;
     const endAll = /^\}\);/i;
 
-    function wrapper (string) {
-        return "// Some imports and comments\nconst component = require('./component');\n\ndescribe('suite', function () {\n" + string + "\n});\n"
-    }
-
     content = content.replace(/\n$/,"")
 
     const arr = content.split("\n");
@@ -17,7 +13,9 @@ module.exports = function(content) {
     const blocks = [];
     let blockIndStart = null
 
+
     for (let i = 1; i < len; i++) {
+
         if ( startBlock.test(arr[i]) || endAll.test(arr[i])) {
             if (endBlock.test(arr[i - 1])) {
                 blocks.push([blockIndStart, i-1]);
@@ -27,7 +25,9 @@ module.exports = function(content) {
         }
     }
 
-    const result = blocks.map (item => wrapper(arr.slice(item[0], item[1]+1).join("\n")));
-    return result;
+    const docStart = arr.slice(0, blocks[0][0]).join("\n") + "\n";
+    const docEnd = "\n});\n"
+
+    return  blocks.map(item => docStart + arr.slice(item[0], item[1]+1).join("\n") + docEnd);
 }
 
