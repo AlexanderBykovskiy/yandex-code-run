@@ -1,5 +1,12 @@
 const parser = require("./modules/rp-256");
 
+
+
+
+
+
+
+
 const test1 = `// Some imports and comments
 const component = require('./component');
 
@@ -20,8 +27,12 @@ describe('suite', function () {
         arr.map((i,j) => {
             return i;
         });
+        });
     });
-});`
+});
+
+
+`
 
 console.log("Test 1:", parser(test1));
 
