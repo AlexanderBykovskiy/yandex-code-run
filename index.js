@@ -4,4 +4,4 @@ const test1 = {
     "participants": ["Mary", "Kate"],
     "sports": ["football", "hockey"]
 }
-console.log(converter(test1.participants, test1.sports));
+console.log(test1);

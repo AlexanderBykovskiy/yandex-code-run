@@ -1,49 +1,30 @@
-module.exports = function (participants, sports) {
-
-    /**
-     * Подобно оператору new создает экземпляр объекта,
-     * используя функцию-конструктор и параметры для нее
-     */
-    function constructFrom (fnConstructor, params) {
-        const res = {};
-
-        fnConstructor.bind(res).call(params);
-
-        Object.setPrototypeOf(res, fnConstructor);
-
+module.exports = function ( { participants, sports }) {
+    function constructFrom(fnConstructor, params) {
+        const res = Object.create(fnConstructor.prototype);
+        fnConstructor.apply(res, params);
         return res;
     }
 
-    /**
-     * Создает пары вида ["вид спорта", "имя участника"],
-     * где первому виду спорта соответствует последний участник
-     */
-    function assignParicipants () {
+    function assignParticipants() {
         const participants = this.participants;
         const sports = this.sports;
         const orderIndexes = [];
-        let i = sports.length;
 
-        while (i--) {
-            orderIndexes.push(function() {
-                return i;
-            });
+        for (let i = sports.length - 1; i >= 0; i--) {
+            orderIndexes.push(i);
         }
 
-        return orderIndexes.map(
-            (getSportIndex, i) => [sports[i], participants[getSportIndex()]]
-        );
+        return orderIndexes.map((index, i) => [sports[i], participants[index]]);
     }
 
-    function Contest (participants, sports) {
+    function Contest(participants, sports) {
         this.participants = participants;
         this.sports = sports;
     }
 
-    Contest.prototype.assignParicipants = assignParicipants;
+    Contest.prototype.assignParticipants = assignParticipants;
 
+    const contest = constructFrom(Contest, [participants, sports]);
 
-    const contest = constructFrom(Contest, participants, sports);
-
-    return contest.assignParicipants();
+    return contest.assignParticipants();
 }
