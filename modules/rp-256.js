@@ -6,7 +6,12 @@ module.exports = function(content /* текст тестового файла */
 
     const result = [];
     matches.forEach(item => {
-        const string ="// Some imports and comments\nconst component = require('./component');\n\ndescribe('suite', function () {\n    " + item + "\n});\n";
+        const string = `// Some imports and comments
+const component = require('./component');
+
+describe('suite', function () {
+    ${item}
+});`;
         console.log(string);
         result.push(string)
     });
