@@ -1,0 +1,169 @@
+<style>
+    :root {
+        --red-light: #f45a3b;
+        --black: #000000;
+        --gray-light: #d8d8d8;
+        --red: #ff0000;
+        --gray: #999999;
+        --gray-dark: #666666;
+        --gray-super-dark: #222222;
+        --white: #ffffff;
+    }
+
+    html {
+        background-image: linear-gradient(45deg, #f45a3b, #ffffff);
+    }
+    body {margin: 0}
+    .container {
+        width: 1000px;
+        height: 1000px;
+        position: relative;
+    }
+    .container * {
+        position: absolute;
+    }
+    .stick {
+        left: 380px;
+        top: 105px;
+        height: 320px;
+        width: 5px;
+        background-color: var(--gray);
+    }
+    .flag {
+        left: 315px;
+        top: 110px;
+        height: 0px;
+        width: 0px;
+        border-right: 65px solid var(--red);
+        border-top: 20px solid transparent;
+        border-bottom: 20px solid transparent;
+    }
+    .foundation-t {
+        left: 355px;
+        top: 425px;
+        height: 5px;
+        width: 55px;
+        border-radius: 5px 5px 0 0;
+        overflow: hidden;
+        background-color: var(--black);
+    }
+    .foundation-m {
+        left: 355px;
+        top: 430px;
+        height: 35px;
+        width: 55px;
+        box-sizing: border-box;
+        border: 1px solid var(--black);
+        border-top-width: 3px; /* not correct */
+        border-bottom: none;
+        background-color: var(--gray-dark);
+     }
+    .foundation-b {
+        left: 320px;
+        top: 465px;
+        height: 0;
+        width: 75px;
+        border-bottom: 55px solid var(--black);
+        border-left: 20px solid transparent;
+    }
+    .cover {
+        left: 250px;
+        top: 520px;
+        height: 50px;
+        width: 530px;
+        display: flex;
+    }
+    .divider {
+        left: 245px;
+        top: 570px;
+        height: 15px;
+        width: 540px;
+        background-color: var(--red);
+        border-radius: 15px;
+    }
+    .body {
+        left: 255px;
+        top: 585px;
+        height: 130px;
+        width: 520px;
+        background-color: var(--red-light);
+        border-radius: 0 0 25px 25px;
+        box-sizing: border-box;
+        border: 1px solid var(--red);
+        border-top:none;
+        border-bottom: none;
+    }
+    .chassis-t {
+        left: 270px;
+        top: 715px;
+        height: 0;
+        width: 470px;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 10px solid var(--gray-super-dark);
+    }
+    .chassis-m {
+        left: 270px;
+        top: 725px;
+        height: 30px;
+        width: 490px;
+        background-color: var(--gray-super-dark);
+    }
+    .chassis-b {
+        left: 270px;
+        top: 755px;
+        height: 0;
+        width: 350px;
+        border-left: 70px solid transparent;
+        border-right: 70px solid transparent;
+        border-top: 70px solid var(--gray-super-dark);
+    }
+    .wheels, .wheel-m:before, .wheel-m:after {
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        background-color: var(--black);
+    }
+    .wheel-m {
+        left: 455px;
+        top: 755px;
+    }
+    .wheel-m:before, .wheel-m:after {
+        content: "";
+        display: block;
+        position: absolute;
+    }
+    .wheel-m:before {
+        right: 175px;
+    }
+    .wheel-m:after {
+        left: 175px;
+    }
+</style>
+<body>
+    <div class="container">
+
+        <div class="stick"></div>
+        <div class="flag"></div>
+
+        <div class="foundation-t"></div>
+        <div class="foundation-m"></div>
+        <div class="foundation-b"></div>
+
+        <div class="cover">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="body"></div>
+
+        <div class="chassis-t"></div>
+        <div class="chassis-m"></div>
+        <div class="chassis-b"></div>
+
+        <div class="wheels wheel-m"></div>
+
+    </div>
+</body>
