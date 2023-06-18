@@ -16,9 +16,11 @@ describe('suite', function () {
             console.log("super");
         };
     });
+    
     it('test2', function () {
         // Some test 2
     });
+    
     it.skip('test3', function () {
         // Some test 3
         const lol = () => {
@@ -30,8 +32,6 @@ describe('suite', function () {
         });
     });
 });
-
-
 `
 
 console.log("Test 1:", parser(test1));
