@@ -6,6 +6,7 @@ const component = require('./component');
 describe('suite', function () {
     it('test1', function () {
         // Some test 1
+        function () {} });
     });
     it('test2', function () {
         // Some test 2

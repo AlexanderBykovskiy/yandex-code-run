@@ -13,7 +13,7 @@ describe('suite', function () {
     ${item}
 });
 `;
-        //console.log(string);
+        console.log(string);
         result.push(string)
     });
 
