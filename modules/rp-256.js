@@ -1,36 +1,49 @@
 module.exports = function(content) {
 
-    const startBlock = /^[ ]*it(.skip)?\(/i;
-    const endBlock = /^[ ]+\}\);/i;
-
-    // content = content.replace(/\n$/,"")
+    const startDescribe = /^ *describe *\(/i;
+    const startBlock = /^ *it(.skip)?/i;
+    const endBlock = /^ *} *\) *; *$/i;
 
     const arr = content.split("\n");
     const len = arr.length
-    if (len < 2) return console.log('Wrong input data')
 
-    const blocks = [];
-    let blockIndStart = null
+    const wrapper = [];
 
-
-    for (let i = 1; i < len; i++) {
-        if (startBlock.test(arr[i]) || i === len - 1) {
-            if (blockIndStart !== null) {
-                for (let j = i - 1; j>blockIndStart ; j--) {
-                    if (endBlock.test(arr[j])) {
-                        blocks.push([blockIndStart, j]);
-                        break;
-                    }
+    for (let i = 0; i < len; i++) {
+        if (startDescribe.test(arr[i])) {
+            for (let j = len - 1; j > i; j--) {
+                if (endBlock.test(arr[j])) {
+                    wrapper.push(i);
+                    wrapper.push(j);
+                    break;
                 }
             }
-            blockIndStart = i;
+            break;
         }
-
     }
 
-    const docStart = arr.slice(0, blocks[0][0]).join("\n") + "\n";
-    const docEnd = "\n" + arr.slice(blocks[blocks.length-1][1]+1, len).join("\n");
+    console.log("wrapper", wrapper)
 
-    return  blocks.map(item => docStart + arr.slice(item[0], item[1]+1).join("\n") + docEnd);
+    if (wrapper[0] < 0 && wrapper[1] < 1) console.log("Wrong data");
+
+    const blocks = [];
+    let block = [null, null];
+    for (let i = wrapper[1] - 1; i > wrapper[0]; i--) {
+
+        if (block[1] === null && endBlock.test(arr[i])) {
+            block[1] = i;
+        }
+
+        if (block[0] === null && block[1] !== null && startBlock.test(arr[i])) {
+            block[0] = i;
+            blocks.unshift([block[0], block[1]]);
+            block[0] = null;
+            block[1] = null;
+        }
+    }
+
+    console.log(blocks);
+
+    return blocks.map(item => arr.slice(0, wrapper[0]+1).join("\n") + "\n" + arr.slice(item[0], item[1] + 1).join("\n") + "\n" + arr.slice(wrapper[1], len + 1).join("\n"));
 }
 
