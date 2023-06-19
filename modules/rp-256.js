@@ -1,8 +1,8 @@
 module.exports = function(content) {
 
-    const startDescribe = /^ *describe *\(/i;
-    const startBlock = /^ *it(.skip)?/i;
-    const endBlock = /^ *} *\) *; *$/i;
+    const startDescribe = /^\s*describe\s*\(/i;
+    const startBlock = /^\s*it[.(]/i;
+    const endBlock = /^\s*}?\s*\)\s*;?\s*$/i;
 
     const arr = content.split("\n");
     const len = arr.length
@@ -22,9 +22,9 @@ module.exports = function(content) {
         }
     }
 
-    console.log("wrapper", wrapper)
+    // console.log("wrapper", wrapper)
 
-    if (wrapper[0] < 0 && wrapper[1] < 1) console.log("Wrong data");
+    // if (wrapper[0] < 0 && wrapper[1] < 1) console.log("Wrong data");
 
     const blocks = [];
     let block = [null, null];
@@ -42,7 +42,7 @@ module.exports = function(content) {
         }
     }
 
-    console.log(blocks);
+    // console.log(blocks);
 
     return blocks.map(item => arr.slice(0, wrapper[0]+1).join("\n") + "\n" + arr.slice(item[0], item[1] + 1).join("\n") + "\n" + arr.slice(wrapper[1], len + 1).join("\n"));
 }
