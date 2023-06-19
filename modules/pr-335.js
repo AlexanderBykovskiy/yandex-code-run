@@ -1,27 +1,24 @@
 module.exports = function (str) {
 
-    const validSequences = ["7", "1111", "711"];
+    const available = ["1111", "711", "7"];
 
     if (!(typeof str === 'string' || str instanceof String || Object.prototype.toString.call(str) === '[object String]') || str.length > 3e10 || str.length < 1) return false;
 
-    str.replace(/^0+/, '').trim();
+    if (!(/^[71]+$/.test(str))) return false;
+    const check = (pos, str) => {
 
-    const checkSubsequence = (str, startIndex) => {
-        if (startIndex === str.length) {
-            return true; // Вся строка была обработана
-        }
+        if (pos === str.length) return true;
 
-        for (const sequence of validSequences) {
-            if (str.startsWith(sequence, startIndex)) {
-                const newStartIndex = startIndex + sequence.length;
-                if (checkSubsequence(str, newStartIndex)) {
-                    return true; // Строка можно составить из последовательностей
-                }
+        for (const item of available) {
+            if (str.startsWith(item, pos)) {
+                const newPos = pos + item.length;
+                if (check(newPos, str)) return true;
             }
         }
 
-        return false; // Невозможно составить строку из последовательностей
-    };
+        return false;
 
-    return checkSubsequence(str, 0);
+    }
+
+    return check(0, str);
 }
