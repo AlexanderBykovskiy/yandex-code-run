@@ -1,71 +1,92 @@
-const print = (multiArray, sailing = undefined) => {
+const print = (multiArray, sailing = undefined, floor = undefined, index = undefined) => {
     if (sailing) console.log(" ", " ", sailing)
     console.log(" ", " ", "-".repeat(multiArray[0].length))
-    console.log(" ", " ", "01234567890123456789")
-    console.log(" ", " ", "-".repeat(multiArray[0].length))
+    if (index) {
+        console.log( ' ', ' ', '01234567890123456789' );
+        console.log(" ", " ", "-".repeat(multiArray[0].length))
+    }
     multiArray.forEach((r, i) => {
         let str = "";
         r.forEach(c => str+=c);
         console.log(i, ":", str);
     })
     console.log(" ", " ", "-".repeat(multiArray[0].length))
+    if (floor) console.log(" ", " ", floor)
 }
 
 function scan (multiArray) {
 
-    let sailing = new Array(multiArray[0].length).fill(" ");
+    let ceil = new Array(multiArray[0].length).fill(" ");
+    let floor = new Array(multiArray[0].length).fill(" ");
 
     let width = multiArray[0].length;
     let height = multiArray.length;
 
-    const lookAround = (x, y) => {
-        console.log("(", x, y, ")");
-        if (y-1 > 0 && multiArray[y-1][x] === 1) {
-            console.log("^");
+    const lookAroundT = (x, y) => {
+        //console.log("(", x, y, ")");
+        let end = false;
+        if (y-1 >= 0 && multiArray[y-1][x] === 1) {
+            //console.log("^");
             multiArray[y-1][x] = "+";
             print(multiArray);
-            lookAround(x, y-1);
+            end = end || lookAroundT(x, y-1);
         }
-        if (x-1 > 0 && multiArray[y][x-1] === 1) {
-            console.log("<");
+        if (x-1 >= 0 && multiArray[y][x-1] === 1) {
+            //console.log("<");
             multiArray[y][x-1] = "+";
             print(multiArray);
-            lookAround(x-1 , y);
+            end = end || lookAroundT(x-1 , y);
         }
         if (x+1 < width && multiArray[y][x+1] === 1) {
-            console.log(">");
+            //console.log(">");
             multiArray[y][x+1] = "+";
             print(multiArray);
-            lookAround(x+1 , y);
+            end = end || lookAroundT(x+1 , y);
         }
         if (y+1 < height && multiArray[y+1][x] === 1) {
-            console.log("|");
+            //console.log("|");
             multiArray[y+1][x] = "+";
             print(multiArray);
-            lookAround(x, y+1);
+            end = end || lookAroundT(x, y+1);
         }
-        if (y+1 === height)
-            console.log("both", x, y);
+
+        if (y+1 === height) {
+            end = true;
+        }
+
+        return end;
     }
 
-
+    // top
     for (let i=0; i<width; i++) {
-        console.log("-",i,"-");
         let x = i;
         let y = 0;
         if (multiArray[0][i] === 1) {
-            sailing[i] = "s"
+            ceil[i] = "c"
             multiArray[y][x] = '+'
-            lookAround(x, y);
+            if (lookAroundT(x, y)) ceil[i] = "b";
         }
     }
 
-    print(multiArray, sailing.join(""));
+    // bottom
+    for (let i=0; i<width; i++) {
+        let x = i;
+        let y = height-1;
+        if (multiArray[height-1][i] === 1) {
+            floor[i] = "f"
+            multiArray[y][x] = '+'
+            lookAroundT(x, y);
+        }
+    }
+
+    print(multiArray, ceil.join(""), floor.join(""));
 
 
-    const result = {ceil: 2, floor: 2, both: 1}
-
-    return undefined;
+    return {
+        ceil: ceil.filter(item => item === "c").length,
+        floor: floor.filter(item => item === "f").length,
+        both: ceil.filter(item => item === "b").length
+    };
 }
 
 
