@@ -28,25 +28,25 @@ function scan (multiArray) {
         if (y-1 >= 0 && multiArray[y-1][x] === 1) {
             //console.log("^");
             multiArray[y-1][x] = "+";
-            print(multiArray);
+            // print(multiArray);
             end = end || lookAroundT(x, y-1);
         }
         if (x-1 >= 0 && multiArray[y][x-1] === 1) {
             //console.log("<");
             multiArray[y][x-1] = "+";
-            print(multiArray);
+            // print(multiArray);
             end = end || lookAroundT(x-1 , y);
         }
         if (x+1 < width && multiArray[y][x+1] === 1) {
             //console.log(">");
             multiArray[y][x+1] = "+";
-            print(multiArray);
+            // print(multiArray);
             end = end || lookAroundT(x+1 , y);
         }
         if (y+1 < height && multiArray[y+1][x] === 1) {
             //console.log("|");
             multiArray[y+1][x] = "+";
-            print(multiArray);
+            // print(multiArray);
             end = end || lookAroundT(x, y+1);
         }
 
@@ -79,8 +79,7 @@ function scan (multiArray) {
         }
     }
 
-    print(multiArray, ceil.join(""), floor.join(""));
-
+    // print(multiArray, ceil.join(""), floor.join(""));
 
     return {
         ceil: ceil.filter(item => item === "c").length,
