@@ -3,28 +3,28 @@ const { getHashByData, fetchData } = require('./utils');
 module.exports = async function(urls, retryCount) {
     const results = [];
 
-    for (const url of urls) {
-        let success = false;
-        let response;
-
+    const fetchPromises = urls.map(async (url) => {
         for (let i = 0; i <= retryCount; i++) {
             try {
-                response = await fetchData(url);
+                const response = await fetchData(url);
                 const calculatedHash = await new Promise(resolve => {
                     getHashByData(response.data, resolve);
                 });
 
                 if (calculatedHash === response.hashSum) {
-                    success = true;
-                    break;
+                    return response.data;
                 }
             } catch (error) {
                 console.error(`Error fetching data from ${url}: ${error}`);
             }
         }
+        return null;
+    });
 
-        if (success) {
-            results.push(response.data);
+    const resolvedPromises = await Promise.all(fetchPromises);
+    for (const data of resolvedPromises) {
+        if (data !== null) {
+            results.push(data);
         }
     }
 
