@@ -9,6 +9,11 @@ const solution = require('./solution.js');
  *
  * Меняя параметр retryCount и набор урлов, вы можете сэмулировать все возможные варианты работы системы.
  */
-solution(["metrika.ru/api/analitics", "badhost-analitics.com/api/analitics", "google.ru/api/analitics", "boston-dynamics.com/api/analitics"], 4)
+
+solution(["metrika.ru/api/analitics", "google.ru/api/analitics"], 3)
     .then(console.log)
     .catch(console.error)
+
+/*solution(["metrika.ru/api/analitics", "badhost-analitics.com/api/analitics", "google.ru/api/analitics", "boston-dynamics.com/api/analitics"], 4)
+    .then(console.log)
+    .catch(console.error)*/

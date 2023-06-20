@@ -1,14 +1,32 @@
-const {getHashByData, fetchData} = require('./utils');
+const { getHashByData, fetchData } = require('./utils');
 
 module.exports = async function(urls, retryCount) {
+    const results = [];
 
-    const cb = (servHash) => console.log(servHash)
+    for (const url of urls) {
+        let success = false;
+        let response;
 
+        for (let i = 0; i <= retryCount; i++) {
+            try {
+                response = await fetchData(url);
+                const calculatedHash = await new Promise(resolve => {
+                    getHashByData(response.data, resolve);
+                });
 
-    const response = await fetchData(urls[0])
-    console.log(response);
-    const hash = getHashByData(response.data, cb)
-    console.log(hash);
+                if (calculatedHash === response.hashSum) {
+                    success = true;
+                    break;
+                }
+            } catch (error) {
+                console.error(`Error fetching data from ${url}: ${error}`);
+            }
+        }
 
-    return [response.data];
-}
+        if (success) {
+            results.push(response.data);
+        }
+    }
+
+    return results;
+};
