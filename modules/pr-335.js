@@ -1,21 +1,39 @@
 module.exports = function (str) {
+
+    // console.log("str", str, str.length)
+    // console.log(str.split("").map((_, i) => i).join(""))
+
+    if (str < 1) return false;
+
     const available = ["1111", "711", "7"];
-    const n = str.length;
 
-    if (!(typeof str === 'string' || str instanceof String || Object.prototype.toString.call(str) === '[object String]') || str.length > 3e10 || str.length < 1) return false;
+    let i = str.length;
 
-    if (!(/^[71]+$/.test(str))) return false;
+    while (i > 0) {
 
-    const dp = new Array(n + 1).fill(false);
-    dp[0] = true;
+        let find = false;
 
-    for (let i = 1; i <= n; i++) {
-        for (const item of available) {
-            if (item.length <= i && str.slice(i - item.length, i) === item) {
-                dp[i] = dp[i] || dp[i - item.length];
+        for (let j=0; j<available.length; j++) {
+
+            const pattern = available[j];
+            const patternLen = pattern.length;
+            const start = i - patternLen;
+            const end = i;
+
+            if (start < 0) continue;
+            //console.log(`i:${i} - `, `|${pattern}| (${patternLen}) :`, `|${str.slice(start, end)}| (${start}: ${end}) :`)
+            if (str.slice(start, end) === pattern) {
+                //console.log('*')
+                find = true;
+                i = i - patternLen;
+                break;
             }
         }
+
+        //console.log(`find: ${find}   i: ${i}`)
+        if (find === false || i < 0) return false;
     }
 
-    return dp[n];
+    return true;
+
 };
