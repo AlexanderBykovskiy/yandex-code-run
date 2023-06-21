@@ -18,11 +18,11 @@ const test1 = {
 
 
 const test2 = {
-    "n": 2,
+    "n": 24,
     "width": 1200,
     "height": 900
 }
-console.log(`[
+/*console.log(`[
     {
         "x": 0,
         "y": 225,
@@ -35,13 +35,13 @@ console.log(`[
         "width": 600,
         "height": 450
     }
-]`);
+]`);*/
 console.log(convert(test2.n, test2.width, test2.height))
 
 
 
 const test3 = {
-    "n": 3,
+    "n": 7,
     "width": 1200,
     "height": 900
 }
@@ -65,4 +65,4 @@ const test3 = {
         "height": 450
     }
 ]`);*/
-//console.log(convert(test3.n, test3.width, test3.height))
+// console.log(convert(test3.n, test3.width, test3.height))
