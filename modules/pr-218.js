@@ -59,5 +59,5 @@ module.exports = function (mapString) {
         if (item > timeInSec) timeInSec = item;
     } )
 
-    return timeInSec + 1; // первая секунда, в которую в кастрюле отсутствуют буквы
+    return timeInSec ? timeInSec + 1 : 1; // первая секунда, в которую в кастрюле отсутствуют буквы
 }

@@ -2,15 +2,15 @@ const timeCalculator = require("./modules/pr-218");
 
 
 const test1 =
-`+---0---+
-|       |
-| Y     |
-|       |
-2     Z |
+`1-------2
 |       |
 |       |
 |       |
-3------1+`
+5       |
+|       |
+|       |
+|       |
+3-------+`
 console.log("\nT 1\n", timeCalculator(test1));
 
 const test2 =
@@ -26,4 +26,4 @@ const test2 =
 |         L              R       |
 |                                |
 +----------------2---------------+`
-console.log("\nT 2\n", timeCalculator(test2));
+//console.log("\nT 2\n", timeCalculator(test2));
