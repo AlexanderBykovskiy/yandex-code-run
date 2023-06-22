@@ -10,7 +10,7 @@ module.exports = function (mapString) {
     const cCount = mapArray[0].length;
 
     const holes = [];
-    for (let y = 0; y < rCount-1; y++) {
+    for (let y = 0; y < rCount; y++) {
         //console.log("#", mapArray[y][0], mapArray[y][cCount-1])
         if(holePattern.test(mapArray[y][0])) {
             holes.push([0, y]);
@@ -19,7 +19,7 @@ module.exports = function (mapString) {
             holes.push([cCount-1, y]);
         }
     }
-    for (let x = 1; x < cCount; x++) {
+    for (let x = 1; x < cCount-1; x++) {
         //console.log("#", mapArray[0][x], mapArray[rCount-1][x])
         if(holePattern.test(mapArray[0][x])) {
             holes.push([x, 0]);
