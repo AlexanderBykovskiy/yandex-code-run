@@ -12,7 +12,7 @@ function isRelativies(genA, genB, level) {
 
     function isCommon (a,b) {
         for(let i=0; i<a.length; i++) {
-            //console.log(item,b.includes(item) )
+            //console.log(item,b.includes(item))
             if (b.includes(a[i])) return true;
         }
         return false;
