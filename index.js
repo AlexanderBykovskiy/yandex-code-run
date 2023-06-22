@@ -5,11 +5,11 @@ const test1 = `+---0---+
 |       |
 | Y     |
 |       |
-2       |
+2     Z |
 |       |
 |       |
 |       |
-+---1---+`
++------1+`
 console.log("\nT 1\n", timeCalculator(test1));
 
 const test2 = `+----------------0---------------+
@@ -24,4 +24,4 @@ const test2 = `+----------------0---------------+
 |         L              R       |
 |                                |
 +----------------2---------------+`
-console.log("\nT 2\n", timeCalculator(test2));
+//console.log("\nT 2\n", timeCalculator(test2));
