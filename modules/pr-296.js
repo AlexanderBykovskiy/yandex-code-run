@@ -10,6 +10,14 @@
  */
 function isRelativies(genA, genB, level) {
 
+    function isCommon (a,b) {
+        for(let i=0; i<a.length; i++) {
+            //console.log(item,b.includes(item) )
+            if (b.includes(a[i])) return true;
+        }
+        return false;
+    }
+
     if (genA === genB) return true;
     if (!genA || !genB) return false;
     if (Math.abs(genB.length - genA.length) > level) return false;
@@ -30,7 +38,7 @@ function isRelativies(genA, genB, level) {
     //console.log('level', currentLevel)
     while (queryLong.length && currentLevel <= level) {
         //console.log("#",queryLong, queryShort)
-        if(queryLong.some(item => queryShort.includes(item))) {
+        if(isCommon(queryLong, queryShort)) {
             //console.log("have same")
             return true
         }

@@ -1,6 +1,6 @@
 const {isRelativies} = require("./modules/pr-296");
 
-const test1 = {"genA":"ATTTGCGC","genB":"CGCGATTT","level":3};
+const test1 = {"genA":"ATTTGCGC","genB":"CGCGATTT","level":7};
 console.log('test 1:', isRelativies(test1.genA, test1.genB, test1.level));
 
 
