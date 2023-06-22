@@ -79,7 +79,7 @@ function scan (multiArray) {
         }
     }
 
-    // print(multiArray, ceil.join(""), floor.join(""));
+    print(multiArray, ceil.join(""), floor.join(""));
 
     return {
         ceil: ceil.filter(item => item === "c").length,
