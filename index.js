@@ -10,7 +10,7 @@ const test1 =
 |       |
 |       |
 |       |
-+------1+`
+3------1+`
 console.log("\nT 1\n", timeCalculator(test1));
 
 const test2 =

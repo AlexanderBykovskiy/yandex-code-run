@@ -10,7 +10,7 @@ module.exports = function (mapString) {
     const cCount = mapArray[0].length;
 
     const holes = [];
-    for (let y = 1; y < rCount-1; y++) {
+    for (let y = 0; y < rCount-1; y++) {
         //console.log("#", mapArray[y][0], mapArray[y][cCount-1])
         if(holePattern.test(mapArray[y][0])) {
             holes.push([0, y]);
@@ -19,7 +19,7 @@ module.exports = function (mapString) {
             holes.push([cCount-1, y]);
         }
     }
-    for (let x = 1; x < cCount-1; x++) {
+    for (let x = 1; x < cCount; x++) {
         //console.log("#", mapArray[0][x], mapArray[rCount-1][x])
         if(holePattern.test(mapArray[0][x])) {
             holes.push([x, 0]);
@@ -40,7 +40,7 @@ module.exports = function (mapString) {
 
     let minWays = [];
     letters.forEach(letter => {
-        let minWay = rCount + cCount;
+        let minWay = rCount + cCount + 1;
         holes.forEach(hole => {
             const way = Math.abs(hole[0] - letter[0]) + Math.abs(hole[1] - letter[1])
             if (way < minWay) minWay = way;
@@ -53,12 +53,11 @@ module.exports = function (mapString) {
     console.log("holes", holes, holes.length)
     console.log("letrs", letters, letters.length)
     console.log("min ways", minWays)
-    console.log()
 
     let timeInSec = minWays[0];
     minWays.forEach(item => {
         if (item > timeInSec) timeInSec = item;
     } )
 
-    return {"result":timeInSec}; // первая секунда, в которую в кастрюле отсутствуют буквы
+    return timeInSec + 1; // первая секунда, в которую в кастрюле отсутствуют буквы
 }
