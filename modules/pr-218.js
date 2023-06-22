@@ -38,12 +38,27 @@ module.exports = function (mapString) {
         }
     }
 
+    let minWays = [];
+    letters.forEach(letter => {
+        let minWay = rCount + cCount;
+        holes.forEach(hole => {
+            const way = Math.abs(hole[0] - letter[0]) + Math.abs(hole[1] - letter[1])
+            if (way < minWay) minWay = way;
+            // console.log("way", hole, letter, way)
+        });
+        minWays.push(minWay);
+    })
+
     console.log("row", rCount, "col", cCount)
-    console.log("holes", holes)
-    console.log("letrs", letters)
+    console.log("holes", holes, holes.length)
+    console.log("letrs", letters, letters.length)
+    console.log("min ways", minWays)
+    console.log()
 
+    let timeInSec = minWays[0];
+    minWays.forEach(item => {
+        if (item > timeInSec) timeInSec = item;
+    } )
 
-    const timeInSec = Infinity;
-
-    return timeInSec; // первая секунда, в которую в кастрюле отсутствуют буквы
+    return {"result":timeInSec}; // первая секунда, в которую в кастрюле отсутствуют буквы
 }
