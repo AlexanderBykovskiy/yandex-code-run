@@ -12,6 +12,8 @@ function isRelativies(genA, genB, level) {
 
     level = String(level);
     if (!genA || !genB) return false;
+    if (Math.abs(genB.length - genA.length) > level) return false;
+    if (level > Math.max(genB.length, genA.length)) level = Math.max(genB.length, genA.length);
     if (genA === genB) return true;
 
     function getParents(children) {
@@ -37,7 +39,7 @@ function isRelativies(genA, genB, level) {
 
     for(let i=0; i<parentsA.length; i++) {
         const index = genB.indexOf(parentsA[i]);
-        if (index >=0 && index <= level) return true;
+        if (index >=0 && (index <= level || index >= genB.length - level )) return true;
     }
 
 
