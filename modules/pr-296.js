@@ -10,57 +10,57 @@
  */
 function isRelativies(genA, genB, level) {
 
-    function isCommon (a,b) {
-        for(let i=0; i<a.length; i++) {
-            //console.log(item,b.includes(item))
-            if (b.includes(a[i])) return true;
-        }
-        return false;
+    if (genA === genB) {
+        console.log("input equal")
+        return true
     }
-
-    if (genA === genB) return true;
-    if (!genA || !genB) return false;
-    if (Math.abs(genB.length - genA.length) > level) return false;
+    if (!genA || !genB) {
+        console.log("input empty")
+        return false
+    }
+    if (Math.abs(genB.length - genA.length) > level) {
+        console.log("input small level")
+        return false
+    }
 
     let long = genB.length >= genA.length ? genB : genA;
     let short = genB.length < genA.length ? genB : genA;
 
-    let queryLong = [long];
-    let queryShort = [short];
+    let query = [{long: long, short: short, level: level}];
 
-    let currentLevel = long.length - short.length;
+    while (query.length && query[0].long.length > short.length) {
+        const pr1 = {long: query[0].long.slice(0,-1), short: short, level: query[0].level - 1}
+        const pr2 = {long: query[0].long.slice(1), short: short, level: query[0].level - 1}
+        if (pr1.long === pr1.short || pr2.long === pr2.short) {
+            console.log("hurray")
+            return true;
+        }
+        query.push(pr1);
+        query.push(pr2);
+        query = query.slice(1);
+    }
+    //console.log("before ===",query)
 
-    while (queryLong.length && queryLong[0].length > short.length) {
-        queryLong.push(queryLong[0].slice(0,-1));
-        queryLong.push(queryLong[0].slice(1));
-        queryLong = queryLong.slice(1);
+    while (query.length) {
+        if (query[0].long.length - 1 < 1 || query[0].level < 1) {
+            console.log("short parents")
+            return false;
+        }
+        const pr1 = {long: query[0].long.slice(0,-1), short: query[0].short.slice(0,-1), level: query[0].level - 1}
+        const pr2 = {long: query[0].long.slice(1), short: query[0].short.slice(0,-1), level: query[0].level - 1}
+        const pr3 = {long: query[0].long.slice(0,-1), short: query[0].short.slice(1), level: query[0].level - 1}
+        const pr4 = {long: query[0].long.slice(1), short: query[0].short.slice(1), level: query[0].level - 1}
+        if (pr1.long === pr1.short || pr2.long === pr2.short || pr3.long === pr3.short || pr4.long === pr4.short) {
+            console.log("hurray")
+            return true;
+        }
+        query.push(pr1);
+        query.push(pr2);
+        query.push(pr3);
+        query.push(pr4);
+        query = query.slice(1);
     }
-    //console.log('level', currentLevel)
-    while (queryLong.length && currentLevel <= level) {
-        //console.log("#",queryLong, queryShort)
-        if(isCommon(queryLong, queryShort)) {
-            //console.log("have same")
-            return true
-        }
-        const queryLongLen = queryLong.length;
-        if (queryLong[0].length > 1) {
-            for (let i = 0; i < queryLongLen; i++) {
-                queryLong.push(queryLong[0].slice(0,-1));
-                queryLong.push(queryLong[0].slice(1));
-                queryLong = queryLong.slice(1);
-            }
-        }
-        const queryShortLen = queryShort.length;
-        for (let i = 0; i < queryShortLen; i++) {
-            if (queryShort[0].length > 1) {
-                queryShort.push(queryShort[0].slice(0, -1));
-                queryShort.push(queryShort[0].slice(1));
-                queryShort = queryShort.slice(1);
-            }
-        }
-        currentLevel++;
-    }
-    //console.log("end prog")
+    console.log("finished")
     return false;
 }
 
