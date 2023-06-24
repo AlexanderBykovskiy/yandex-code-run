@@ -22,15 +22,15 @@ function scan (multiArray) {
         let floor = false;
         while ( stack.length ) {
             const {x, y} = stack.pop();
-            if (y === 0) ceil = true;
-            if (both && y === height-1) floor = true;
+            if (both && y === 0) ceil = true;
+            if (y === height-1) floor = true;
             multiArray[y][x] = 0;
             if (y+1 < height && multiArray[y+1][x] === 1) stack.push({x: x, y: y+1});
             if (y-1 >= 0 && multiArray[y-1][x] === 1) stack.push({x: x, y: y-1});
             if (x+1 < width && multiArray[y][x+1] === 1) stack.push({x: x+1, y: y});
             if (x-1 >= 0 && multiArray[y][x-1] === 1) stack.push({x: x-1, y: y});
         }
-        return both ? {ceil, floor} : {ceil}
+        return both ? {ceil, floor} : {floor}
     }
 
     let width = multiArray[0].length;
@@ -52,8 +52,8 @@ function scan (multiArray) {
 
     for (let i = 0; i < multiArray[0].length; i++) {
         if (multiArray[height-1][i] === 1) {
-            const {ceil} = lookAround(i, height-1);
-            if (!ceil) result.floor+=1;
+            const {floor} = lookAround(i, height-1);
+            if (floor) result.floor+=1;
         }
     }
 
