@@ -1,7 +1,7 @@
 const {getLastCommonCommitMessage} = require("./modules/pr-186");
 
 
-console.log("add layout\n", getLastCommonCommitMessage([
+console.log("add layout -", getLastCommonCommitMessage([
     {
         id: '1',
         message: 'initial commit',
@@ -28,3 +28,16 @@ console.log("add layout\n", getLastCommonCommitMessage([
         branches: ['feature/link']
     }
 ], ['bugfix', 'feature/link']));
+
+
+console.log("initial commit -", getLastCommonCommitMessage([
+    {
+        id:"0",
+        timestamp:1625055166428,
+        message:"initial commit",
+        branches:["master"]
+    }
+], ["master", "master"]));
+
+
+console.log("No common commit -", getLastCommonCommitMessage([], ["a", "b"]));
