@@ -4,6 +4,10 @@
  * @return {string}
  */
 module.exports = function (data) {
-    // ваш код
+
+    function extractor () {
+
+    }
+
     return '…';
 }
