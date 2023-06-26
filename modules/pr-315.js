@@ -1,57 +1,65 @@
+module.exports = async function(input) {
+    return new Promise(resolveStart => {
+        const result = [];
 
+        function wrapper(){
+            return new Promise(resolve => {
+                function getIt(input){
+                    let mainSize = 0;
 
-module.exports = async function (input) {
+                    function sizeCheck(){
+                        return new Promise(resolve => {
+                            input.size((size) => mainSize = size);
+                            setTimeout(() => resolve(mainSize), 20);
+                        })
+                    }
 
-    const stack = [];
-    const result = [];
+                    sizeCheck().then(result => {
+                        return mainSize = result;
+                    }).then(mainSize => {
+                        for(let i = 0; i < mainSize; i++){
+                            let currentFile = null;
 
-    const pattern = /^f+i+l+e+$/;
-
-    // пример вызова read
-    //input.read(1, (file) => console.log(file));
-    // пример вызова size
-    //input.size((size) => console.log(size));
-
-
-    const size = await new Promise(resolve => {
-        input.size(resolve);
-    });
-
-    // пример вызова size
-    /*input.size((size) => {
-        for (let i=0; i<size; i++) {
-            input.read(i, (file) => {
-                /!*if (typeof file == 'string' || file instanceof String) {
-                    result.push(file)
-                }*!/
-                const calculatedHash = await new Promise(resolve => {
-                    getHashByData(response.data, resolve);
-                });
-
-                console.log( i, file );
-            });
-        }
-    });*/
-
-    /*const fetchPromises = urls.map(async (url) => {
-        for (let i = 0; i <= retryCount; i++) {
-            try {
-                const response = await fetchData(url);
-                const calculatedHash = await new Promise(resolve => {
-                    getHashByData(response.data, resolve);
-                });
-
-                if (calculatedHash === response.hashSum) {
-                    return response.data;
+                            function checkFile(){
+                                return new Promise(resolve => {
+                                    input.read(i, (file) => currentFile = file);
+                                    setTimeout(() => resolve(currentFile), 20);
+                                })
+                            }
+                            checkFile().then(res => {
+                                if(typeof res === 'string'){
+                                    const repeat = isRepeat(res);
+                                    if(repeat){
+                                        result.push(repeat);
+                                    }
+                                }
+                                else if(!isEmptyOrNull(res)){
+                                    return getIt(res);
+                                }
+                            })
+                        }
+                    })
                 }
-            } catch (error) {
-                console.error(`Error fetching data from ${url}: ${error}`);
-            }
+                getIt(input);
+                setTimeout(() => resolve(), 200);
+            })
         }
-        return null;
-    });*/
 
-    await console.log();
-    return ['ffffile', 'ffiillee', 'ffiillee', 'fiiile', 'filllle'];
+        function isEmptyOrNull(obj) {
+            if(obj === null) return true
 
+            for (let key in obj) {
+                return false;
+            }
+            return true;
+        }
+
+        function isRepeat(str){
+            if(str.split('').length !== new Set(str.split('')).size)
+                return str;
+        }
+
+        wrapper().then(() =>
+            resolveStart(result.sort()));
+    })
 }
