@@ -2,7 +2,7 @@ module.exports = function solveCaptcha(captcha) {
 
     const captchaArr = captcha.trim().split("\n").map(item => item.trim().split(""));
     //console.log(captchaArr)
-    console.log(captchaArr[0].length, captchaArr.length)
+    console.log("x", captchaArr[0].length, "y", captchaArr.length)
 
     let signCount = 0;
     for(let i= 0; i < captcha.length; i++) {
@@ -16,7 +16,7 @@ module.exports = function solveCaptcha(captcha) {
 
     if (fullS % signCount !== 0) return [];
     const partS = fullS / signCount;
-    console.log(partS)
+    console.log("S =",partS)
 
     let rectangles = [];
     for (let i = captchaArr[0].length; i > 0; i--) {
@@ -24,16 +24,15 @@ module.exports = function solveCaptcha(captcha) {
     }
     console.log(rectangles)
 
-    /*
-    // board — это массив слоев
+    // variants — это массив слоев
     // каждый слой — это двумерный массив, в котором
-    // отмечены клетки, занятые определенным фрагментом*/
-    const board = [];
+    // отмечены клетки, занятые определенным фрагментом
+    const variants = [];
 
     // поиск решения перебором
-    function placeNext(remains) {
-        if (remains === 0) {
-            return board;
+    function placeNext(signCount) {
+        if (signCount === 0) {
+            return variants;
         } else {
             // иначе...
 
@@ -54,17 +53,17 @@ module.exports = function solveCaptcha(captcha) {
                 // если удалось поставить фрагмент
                 if (layer) {
                     // добавляем слой на поле
-                    board.push(layer);
+                    variants.push(layer);
 
                     // пробуем поставить следующие фрагменты
-                    const res = placeNext(remains - 1);
+                    const res = placeNext(signCount - 1);
 
                     // если получилось, выходим
                     if (res) return res;
 
                     // иначе убираем фрагмент с поля
                     // и пробуем следующий
-                    board.pop();
+                    variants.pop();
                 }
             }
         }
