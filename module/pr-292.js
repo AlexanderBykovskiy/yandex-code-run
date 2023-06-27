@@ -131,6 +131,8 @@ module.exports = function solveCaptcha(captcha) {
 
     const result = nextLayer([captchaArr], signCount, []);
 
-    console.log(result);
+    //console.log(result);
+
+    return (result)
 
 }
