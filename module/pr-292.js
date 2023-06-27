@@ -1,14 +1,8 @@
-const printResult = (arr, message = undefined) => {
-    if(message) console.log(message, "-")
-    arr.forEach(item => console.log(item))
-    console.log("-")
-}
-
 module.exports = function solveCaptcha(captcha) {
 
-    const captchaArr = captcha.trim().split("\n").map(item => item.trim().split(""));
-    //console.log(captchaArr)
-    //console.log("x:", captchaArr[0].length, "y:", captchaArr.length)
+    const captchaArr = captcha.trim().split("\n").map(item => item.trim());
+    console.log(captchaArr)
+    console.log("x:", captchaArr[0].length, "y:", captchaArr.length)
 
     function getSCount (point, size) {
         let signCount = 0;
@@ -31,108 +25,96 @@ module.exports = function solveCaptcha(captcha) {
     //console.log("S:",partS)
 
     let rectangles = [];
-    for (let i = captchaArr[0].length; i > 0; i--) {
+    for (let i = captchaArr[0].length-1; i >= 0; i--) {
         if (partS % i === 0 && (partS / i) <= captchaArr.length) rectangles.push([i, partS / i]);
     }
     console.log("rectangles:", rectangles)
 
-    function arrToResult(arr) {
-        return arr.map(item => item.join(""));
+    const markPositions = (pos, figure, layout) => {
+        const arr = Array.from(layout)
+        for (let y = pos[1]; y<pos[1]+figure[1]; y++) {
+            arr[y] = arr[y].slice(0, pos[0]) + "#".repeat(figure[0]) + arr[y].slice(pos[0]+figure[0]);
+        }
+        return arr;
     }
 
-    function getFreePosition(arr) {
-        let position = null;
-        loop: {
-            for (let x = 0; x < arr[0].length; x++) {
-                for (let y = 0; y < arr.length; y++) {
-                    if (arr[y][x] !== "#" && arr[y][x] !== "*") {
-                        position = [x, y];
-                        break loop;
-                    }
+    const getPos = (arr) => {
+        for (let x = 0; x < arr[0].length; x++) {
+            for (let y = 0; y < arr.length; y++) {
+                if (!(arr[y][x] === "#" || arr[y][x] === "*")) {
+                    return [x, y];
                 }
             }
         }
-        return position;
+        return null;
     }
 
-    function layerMaker (point, figure, layer) {
-        for (let y = point[1]; y < point[1] + figure[1]; y++) {
-            for (let x = point[0]; x < point[0] + figure[0]; x++) {
-                if (layer[y][x] === "S" || layer[y][x] === "*")
-                    layer[y][x] = "*";
-                else
-                    layer[y][x] = "#";
-            }
-        }
-        return layer;
-    }
+    const getNewLayout = (pos, figure, arr) => {
+        const layout = Array.from(arr)
 
-    function isPossibleStep (point, figure, layer) {
-        let sCount = 0;
-        //console.log("point x", point[0], "fig w", figure[0], "x+w", point[0] + figure[0])
-        // console.log("l x len", layer[0].length)
-        //console.log("point y", point[1], "fig h", figure[1], "y+h", point[1] + figure[1])
-        // console.log("l y len", layer.length)
-        if (point[0] + figure[0] <= layer[0].length && point[1] + figure[1] <= layer.length) {
-            // console.log("try calc")
-            for (let y = point[1]; y < point[1] + figure[1]; y++){
-                // console.log("-", layer[y].join(""))
-                for (let x = point[0]; x < point[0] + figure[0]; x++){
-                    // console.log("+", x)
-                    if (layer[y][x] === "S") sCount++;
+        if (pos[0] + figure[0] <= layout[0].length && pos[1] + figure[1] <= layout.length) {
+            let sCount = 0;
+            for (let y = pos[1]; y < pos[1] + figure[1]; y++) {
+                for (let x = pos[0]; x < pos[0] + figure[0]; x++) {
+                    if (captchaArr[y][x] === "S") sCount++;
                 }
             }
+            if (sCount !== 1) return null;
+            return markPositions(pos, figure, arr);
         }
-        //console.log("sCount:", sCount)
-        return sCount === 1;
+        return null;
     }
 
-    function cFigure (point, figure) {
-        const newFigure = [];
-        for (let y = point[1]; y < point[1] + figure[1]; y++){
-            const newRow = captchaArr[y].slice(point[0], point[0] + figure[0]).join("");
-            // console.log("+++++", newRow)
-            newFigure.push(newRow);
+    const converter = (pos, figure) => {
+        const arr = [];
+        //console.log("p", pos, 'f', figure)
+        for (let y = pos[1]; y < pos[1] + figure[1]; y++) {
+            //console.log("##", captchaArr[y].slice(pos[0], figure[0]))
+            let str = "";
+            for (let x = pos[0]; x<pos[0]+figure[0]; x++) {
+                str+=captchaArr[y][x];
+            }
+            //console.log(y,str)
+            arr.push(str)
         }
-        return newFigure.join("\n");
+        return arr.join("\n");
     }
 
-    function nextLayer(layers, n, successBlocks) {
-        console.log("-----------------------------------------------------------------------------------------")
-        if (!n) return successBlocks;
 
-        const layer = layers[layers.length-1];
-        printResult(arrToResult(layer), "current layer")
+    const query = [[Array.from(captchaArr), signCount, []]];
 
-        const freePosition = getFreePosition(layer);
-        //console.log("current free pos", freePosition);
+    while (query.length) {
 
-        for (let i = 0; i < rectangles.length; i++) {
+        for (let i=rectangles.length-1; i >= 0; i--) {
+
+            const cItem = Array.from(query[0]);
+            //console.log(cItem[0])
+
+            const pos = getPos(cItem[0]);
+
+            if (cItem[1] <= 0) {
+                if (!pos) {
+                    return cItem[2];
+                }
+                continue;
+            }
+
             const figure = rectangles[i];
-            //console.log("-----------")
-            //console.log("curren figure", figure)
-            if (isPossibleStep(freePosition, figure, layer)) {
-                //console.log("can to put")
-                successBlocks.push(cFigure(freePosition, figure));
-                const newLayer = layerMaker(freePosition, figure, layer);
-                // printResult(arrToResult(newLayer), "newLayer")
-                layers.push(newLayer);
-                const nextSuccessBlocks = nextLayer(layers, n-1, successBlocks);
-                if (nextSuccessBlocks.length === signCount)
-                    return successBlocks;
-                else
-                    layers.pop();
-                    successBlocks.pop();
+
+            const newLayout = getNewLayout(pos, figure, Array.from(cItem[0]))
+
+            if (newLayout) {
+                //console.log(newLayout)
+                const rawFigure = converter(pos, figure);
+                const newList = Array.from(cItem[2])
+                newList.push(rawFigure)
+                //console.log(rawFigure)
+                const newArr = [newLayout, cItem[1]-1, newList];
+                //console.log(newArr)
+                query.push(newArr)
             }
         }
-
-        return [];
+        query.shift();
     }
-
-    const result = nextLayer([captchaArr], signCount, []);
-
-    //console.log(result);
-
-    return (result)
 
 }

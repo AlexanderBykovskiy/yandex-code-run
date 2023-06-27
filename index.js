@@ -30,4 +30,4 @@ TWCBWBCA
 // AHWTRWWA
 // `
 
-console.log(solveCaptcha(test1));
+console.log("res", solveCaptcha(test1));
