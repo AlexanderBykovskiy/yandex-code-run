@@ -8,7 +8,7 @@ module.exports = function solveCaptcha(captcha) {
 
     const captchaArr = captcha.trim().split("\n").map(item => item.trim().split(""));
     //console.log(captchaArr)
-    console.log("x:", captchaArr[0].length, "y:", captchaArr.length)
+    //console.log("x:", captchaArr[0].length, "y:", captchaArr.length)
 
     function getSCount (point, size) {
         let signCount = 0;
@@ -28,7 +28,7 @@ module.exports = function solveCaptcha(captcha) {
 
     if (fullS % signCount !== 0) return [];
     const partS = fullS / signCount;
-    console.log("S:",partS)
+    //console.log("S:",partS)
 
     let rectangles = [];
     for (let i = captchaArr[0].length; i > 0; i--) {
@@ -69,9 +69,9 @@ module.exports = function solveCaptcha(captcha) {
 
     function isPossibleStep (point, figure, layer) {
         let sCount = 0;
-        console.log("point x", point[0], "fig w", figure[0], "x+w", point[0] + figure[0])
+        //console.log("point x", point[0], "fig w", figure[0], "x+w", point[0] + figure[0])
         // console.log("l x len", layer[0].length)
-        console.log("point y", point[1], "fig h", figure[1], "y+h", point[1] + figure[1])
+        //console.log("point y", point[1], "fig h", figure[1], "y+h", point[1] + figure[1])
         // console.log("l y len", layer.length)
         if (point[0] + figure[0] <= layer[0].length && point[1] + figure[1] <= layer.length) {
             // console.log("try calc")
@@ -83,7 +83,7 @@ module.exports = function solveCaptcha(captcha) {
                 }
             }
         }
-        console.log("sCount:", sCount)
+        //console.log("sCount:", sCount)
         return sCount === 1;
     }
 
@@ -105,14 +105,14 @@ module.exports = function solveCaptcha(captcha) {
         printResult(arrToResult(layer), "current layer")
 
         const freePosition = getFreePosition(layer);
-        console.log("current free pos", freePosition);
+        //console.log("current free pos", freePosition);
 
         for (let i = 0; i < rectangles.length; i++) {
             const figure = rectangles[i];
-            console.log("-----------")
-            console.log("curren figure", figure)
+            //console.log("-----------")
+            //console.log("curren figure", figure)
             if (isPossibleStep(freePosition, figure, layer)) {
-                console.log("can to put")
+                //console.log("can to put")
                 successBlocks.push(cFigure(freePosition, figure));
                 const newLayer = layerMaker(freePosition, figure, layer);
                 // printResult(arrToResult(newLayer), "newLayer")
