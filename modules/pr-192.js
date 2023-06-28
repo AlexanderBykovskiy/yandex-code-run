@@ -1,5 +1,5 @@
 /**
- * @param {Band|Genre} data - ссылка на группу или жанр,
+ * @param {Band|Genre} obj - ссылка на группу или жанр,
  * из которой нужно восстановить все возможные данные
  * @return {string}
  * class Band {
@@ -15,58 +15,115 @@
  *     parent: Genre | null;
  * }
  */
-module.exports = function (data) {
-
-    const bands = new Set();
-    const genres = new Set();
 
 
-    function bandAppender (name, bands) {
-        const newBand = {name: name, friends: bands.map(item => item.name)};
-        bands.add(newBand);
+module.exports = function (obj) {
+
+    const bands = [];
+    const genres = [];
+
+
+    function isExistGenre (objName) {
+        const index = genres.findIndex(item => item.name === objName);
+        return index >=0;
     }
 
-    function genreAppender (name, parentName, bands) {
-        const newGenre = {name: name, parentName: parentName, bands: bands.map(item => item.name)};
-        genres.add(newGenre);
+    function isExistBand (objName) {
+        const index = bands.findIndex(item => item.name === objName);
+        return index >=0;
     }
 
-    function extractor (data, bands, genres) {
-        if (data.type === "band") {
 
-            bandAppender(data.name, data.friends)
 
-            const bandFriends = data.friends.filter(item => !bands.has(item));
-            console.log("------brs",bandFriends.map(item=> item.name))
-            bandFriends.forEach(band => extractor(band, data));
+    function extractor (obj) {
 
-            const bandGenres = data.genres.filter(item => !genres.has(item));
-            console.log("------gnrs",bandGenres.map(item=> item.name))
-            bandGenres.forEach(genre => extractor(genre));
+        if (obj.type === "band" && !isExistBand(obj.name)) {
 
-        } else if (data.type === "genre") {
+            const newBand = {name: obj.name, friends: obj.friends.map(item => item.name), genres: obj.genres.map(item => item.name)}
+            bands.push(newBand);
 
-            genreAppender(data.name, data.parent?.name, data.bands);
+            obj.friends.forEach(item => {
+                extractor(item);
+            })
 
-            if (data.parent) extractor(data.parent);
+            obj.genres.forEach(item => {
+                extractor(item);
+            })
 
-            const bandFriends = data.bands.filter(item => !bands.has(item));
-            console.log("------brs",bandFriends.map(item=> item.name))
-            //bandFriends.forEach(band => extractor(band));
+        } else if (obj.type === "genre" && !isExistGenre(obj.name)) {
 
-            const bandGenres = data.subgenres.filter(item => !genres.has(item));
-            console.log("------gnrs",bandGenres.map(item=> item.name))
-            //.forEach(genre => extractor(genre));
+            //console.log(obj.subgenres)
+            const newGenre = {name: obj.name, parent: obj?.parent?.name, subgenres: obj.subgenres.map(item => item.name)}
+            genres.push(newGenre);
+
+            obj.bands.forEach(item => {
+                extractor(item);
+            })
+
+            obj.subgenres.forEach(item => {
+                extractor(item);
+            })
+
+            if (obj.parent)
+                extractor(obj.parent);
 
         }
+
     }
 
-    extractor(data)
-    console.log(data)
+    extractor(obj)
+    //console.log(obj)
 
-    console.log(genres)
-    console.log(bands)
+    //console.log("g", genres)
+    //console.log("b", bands)
 
-    //return 'X';
+    let result = "## Жанры\n\n";
+
+    const rootGenre = genres.filter(item => item.parent === undefined);
+    rootGenre
+        .sort((a, b) => {
+            if (a.name > b.name) return 1;
+            if (a.name < b.name) return -1;
+            if (a.name === b.name) return 0;
+        })
+        .forEach(rootGenreItem => {
+
+        const children = genres.filter(item => item.parent === rootGenreItem.name);
+
+        const genreBangs = bands.filter(item => item.genres.includes(rootGenreItem.name))
+
+        let string = "- " + rootGenreItem.name + (children.length ? "" : ": " + genreBangs.map(item => item.name).join(", ")) + "\n";
+
+        if (children.length) {
+            children
+                .sort((a, b) => {
+                    if (a.name > b.name) return 1;
+                    if (a.name < b.name) return -1;
+                    if (a.name === b.name) return 0;
+                })
+                .forEach(item => {
+                    const genreBangs = bands.filter(subitem => subitem.genres.includes(item.name));
+                    let subString = "  - " + item.name + (genreBangs.length ? ": " + genreBangs.map(item => item.name).join(", ") + "\n" : "\n")
+                    string += subString;
+                })
+        }
+
+        result += string;
+    })
+
+    result += "\n## Группы\n\n"
+
+    bands
+        .sort((a, b) => {
+            if (a.name > b.name) return 1;
+            if (a.name < b.name) return -1;
+            if (a.name === b.name) return 0;
+        })
+        .forEach(band => {
+        let string = "- " + band.name + (band.friends.length ? ", друзья: " + band.friends.sort().join(", ") + "\n" : "\n");
+        result += string;
+    });
+
+    return result;
 }
 
