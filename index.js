@@ -1,11 +1,11 @@
 const solveCaptcha = require("./module/pr-292");
 
-// const test1 = `
-//   TRABWARH
-//   THSCAHAW
-//   WWBCWASA
-//   CACACHCR
-// `
+const test1 = `
+  TRABWARH
+  THSCAHAW
+  WWBCWASA
+  CACACHCR
+`
 
 // const test1 = `
 //   TSABWARH
@@ -14,14 +14,14 @@ const solveCaptcha = require("./module/pr-292");
 //   CSCACHCR
 // `
 
-const test1 = `
-HSRSTBHC
-CAWTRTBT
-WBATSTRA
-TWRBRTRR
-RWTABSHB
-TWCBWBCA
-`
+// const test1 = `
+// HSRSTBHC
+// CAWTRTBT
+// WBATSTRA
+// TWRBRTRR
+// RWTABSHB
+// TWCBWBCA
+//`
 
 // const test1 = `
 // TSRSBWAC
@@ -30,4 +30,4 @@ TWCBWBCA
 // AHWTRWWA
 // `
 
-console.log("res", solveCaptcha(test1));
+console.log(solveCaptcha(test1));

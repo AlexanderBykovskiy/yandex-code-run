@@ -1,8 +1,8 @@
 module.exports = function solveCaptcha(captcha) {
 
     const captchaArr = captcha.trim().split("\n").map(item => item.trim());
-    console.log(captchaArr)
-    console.log("x:", captchaArr[0].length, "y:", captchaArr.length)
+    //console.log(captchaArr)
+    //console.log("x:", captchaArr[0].length, "y:", captchaArr.length)
 
     function getSCount (point, size) {
         let signCount = 0;
@@ -28,7 +28,7 @@ module.exports = function solveCaptcha(captcha) {
     for (let i = captchaArr[0].length-1; i >= 0; i--) {
         if (partS % i === 0 && (partS / i) <= captchaArr.length) rectangles.push([i, partS / i]);
     }
-    console.log("rectangles:", rectangles)
+    //console.log("rectangles:", rectangles)
 
     const markPositions = (pos, figure, layout) => {
         const arr = Array.from(layout)
@@ -83,6 +83,8 @@ module.exports = function solveCaptcha(captcha) {
 
     const query = [[Array.from(captchaArr), signCount, []]];
 
+    const results = [];
+
     while (query.length) {
 
         for (let i=rectangles.length-1; i >= 0; i--) {
@@ -92,12 +94,13 @@ module.exports = function solveCaptcha(captcha) {
 
             const pos = getPos(cItem[0]);
 
-            if (cItem[1] <= 0) {
-                if (!pos) {
-                    return cItem[2];
-                }
-                continue;
-            }
+            // if (cItem[1] <= 0) {
+            //     if (!pos) {
+            //
+            //         return results.push(cItem[2]);
+            //     }
+            //     continue;
+            // }
 
             const figure = rectangles[i];
 
@@ -111,10 +114,14 @@ module.exports = function solveCaptcha(captcha) {
                 //console.log(rawFigure)
                 const newArr = [newLayout, cItem[1]-1, newList];
                 //console.log(newArr)
+
                 query.push(newArr)
+                if (newArr[1] === 0) console.log(newArr[2])
             }
         }
         query.shift();
     }
+
+    //console.log(results)
 
 }
