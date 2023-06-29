@@ -77,39 +77,60 @@ module.exports = function (obj) {
     //console.log("g", genres)
     //console.log("b", bands)
 
-    let result = "## Жанры\n\n";
+    function genreParser (parent, level) {
+        let res = "";
+        const rootList = genres
+            .filter(item => item.parent === parent)
+            .sort((a, b) => {
+                if (a.name > b.name) return 1;
+                if (a.name < b.name) return -1;
+                if (a.name === b.name) return 0;
+            });
 
-    const rootGenre = genres.filter(item => item.parent === undefined);
-    rootGenre
-        .sort((a, b) => {
-            if (a.name > b.name) return 1;
-            if (a.name < b.name) return -1;
-            if (a.name === b.name) return 0;
-        })
-        .forEach(rootGenreItem => {
+        if (!rootList.length) return ""; // +++++++++
 
-        const children = genres.filter(item => item.parent === rootGenreItem.name);
+        //console.log("rootList")
+        //console.log(rootList.map(i=>i.name).join("\n"))
 
-        const genreBangs = bands.filter(item => item.genres.includes(rootGenreItem.name))
+        rootList.forEach(item => {
 
-        let string = "- " + rootGenreItem.name + (children.length ? "" : ": " + genreBangs.map(item => item.name).join(", ")) + "\n";
-
-        if (children.length) {
-            children
+            const genreBangs = bands
+                .filter(band => band.genres.includes(item.name))
                 .sort((a, b) => {
                     if (a.name > b.name) return 1;
                     if (a.name < b.name) return -1;
                     if (a.name === b.name) return 0;
                 })
-                .forEach(item => {
-                    const genreBangs = bands.filter(subitem => subitem.genres.includes(item.name));
-                    let subString = "  - " + item.name + (genreBangs.length ? ": " + genreBangs.map(item => item.name).join(", ") + "\n" : "\n")
-                    string += subString;
-                })
-        }
+                .map(band=>band.name);
 
-        result += string;
-    })
+            const genreChildren = genres
+                .filter(subGenre => item.name === subGenre.parent)
+                .sort((a, b) => {
+                    if (a.name > b.name) return 1;
+                    if (a.name < b.name) return -1;
+                    if (a.name === b.name) return 0;
+                })
+                .map(subgenre=>subgenre.name);
+
+            //console.log("+++", genreChildren)
+
+            const subGenreList = genreParser(item.name, level+1);
+
+            res += "  ".repeat(level) + marker + item.name
+                + (genreBangs.length ? ": " + genreBangs.join(", ") + "\n" : "\n")
+                + (subGenreList ? subGenreList : "");
+
+        })
+
+        return res;
+    }
+
+
+    const marker = "- "
+
+    let result = "## Жанры\n\n";
+
+    result += genreParser(undefined, 0);
 
     result += "\n## Группы\n\n"
 
@@ -120,7 +141,7 @@ module.exports = function (obj) {
             if (a.name === b.name) return 0;
         })
         .forEach(band => {
-        let string = "- " + band.name + (band.friends.length ? ", друзья: " + band.friends.sort().join(", ") + "\n" : "\n");
+        let string = marker + band.name + (band.friends.length ? ", друзья: " + band.friends.sort().join(", ") + "\n" : "\n");
         result += string;
     });
 
