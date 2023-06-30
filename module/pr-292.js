@@ -2,8 +2,8 @@ module.exports = function solveCaptcha(captcha) {
 
     const captchaArr = captcha.trim()
         .split("\n").map(item => item.trim());
-    //console.log(captchaArr)
-    //console.log("x:", captchaArr[0].length, "y:", captchaArr.length)
+    console.log(captchaArr)
+    console.log("x:", captchaArr[0].length, "y:", captchaArr.length)
 
     function getSCount (point, size) {
         let signCount = 0;
@@ -15,21 +15,21 @@ module.exports = function solveCaptcha(captcha) {
         return signCount;
     }
     const signCount = getSCount([0, 0], [captchaArr[0].length, captchaArr.length]);
-    if (!(0 < signCount < 10)) return [];
-    //console.log("sCount:", signCount)
+    if (!(0 < signCount <= 10)) return [];
+    console.log("sCount:", signCount)
 
     const fullS = captchaArr.length * captchaArr[0].length;
-    //console.log("fS:", fullS)
+    console.log("fS:", fullS)
 
     if (fullS % signCount !== 0) return [];
     const partS = fullS / signCount;
-    //console.log("S:", partS)
+    console.log("S:", partS)
 
     let rectangles = [];
     for (let i = captchaArr[0].length; i > 0; i--) {
         if (partS % i === 0 && (partS / i) <= captchaArr.length) rectangles.push([i, partS / i]);
     }
-    //console.log("rectangles:", rectangles)
+    console.log("rectangles:", rectangles)
 
 // #####################################################################################################################
 
@@ -76,7 +76,7 @@ module.exports = function solveCaptcha(captcha) {
         }
 
         //console.log("\n---ACCEPT---")
-        //console.log(newLayer)
+        console.log(newLayer)
         //console.log("\n\n")
 
         return newLayer;

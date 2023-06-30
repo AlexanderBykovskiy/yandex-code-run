@@ -24,7 +24,8 @@ const test6 = ".S......\n" +
 
 // console.log(solveCaptcha(test1));
 // console.log(solveCaptcha(test2));
-// console.log(solveCaptcha(test3));
+console.log(solveCaptcha(test3));
 // console.log(solveCaptcha(test4));
 // console.log(solveCaptcha(test5));
-console.log(solveCaptcha(test7));
+// console.log(solveCaptcha(test6));
+// console.log(solveCaptcha(test7));
