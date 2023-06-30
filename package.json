@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "serverstart": "npm-run-parallel watch serve",
     "start": "npm-run-parallel watch serve",
     "build": "tsc",
     "watch": "tsc --watch",
