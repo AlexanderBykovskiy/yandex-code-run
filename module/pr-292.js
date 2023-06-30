@@ -1,13 +1,14 @@
-const printResult = (arr, message = undefined) => {
+const printLayer = (arr, message = undefined) => {
     if(message) console.log(message, "-")
-    arr.forEach(item => console.log(item))
+    arr.forEach(item => console.log(item.join("")))
     console.log("-")
 }
 
 module.exports = function solveCaptcha(captcha) {
 
-    const captchaArr = captcha.trim().split("\n").map(item => item.trim().split(""));
-    //console.log(captchaArr)
+    const captchaArr = captcha.trim()
+        .split("\n").map(item => item.trim().split(""));
+    printLayer (captchaArr)
     console.log("x:", captchaArr[0].length, "y:", captchaArr.length)
 
     function getSCount (point, size) {
@@ -28,7 +29,7 @@ module.exports = function solveCaptcha(captcha) {
 
     if (fullS % signCount !== 0) return [];
     const partS = fullS / signCount;
-    console.log("S:",partS)
+    console.log("S:", partS)
 
     let rectangles = [];
     for (let i = captchaArr[0].length; i > 0; i--) {
@@ -36,106 +37,106 @@ module.exports = function solveCaptcha(captcha) {
     }
     console.log("rectangles:", rectangles)
 
-    // function arrToResult(arr) {
-    //     return arr.map(item => item.join(""));
-    // }
-    //
-    // function getFreePosition(layout) {
-    //     let position = null;
-    //     const arr = Object.assign([], layout);
-    //         loop: {
-    //         for (let x = 0; x < arr[0].length; x++) {
-    //             for (let y = 0; y < arr.length; y++) {
-    //                 if (arr[y][x] !== "#" && arr[y][x] !== "*") {
-    //                     position = [x, y];
-    //                     break loop;
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     return position;
-    // }
-    //
-    // function layerMaker (point, figure, arr) {
-    //     const layer = Object.assign([],arr);
-    //     for (let y = point[1]; y < point[1] + figure[1]; y++) {
-    //         for (let x = point[0]; x < point[0] + figure[0]; x++) {
-    //             if (layer[y][x] === "S" || layer[y][x] === "*")
-    //                 layer[y][x] = "*";
-    //             else
-    //                 layer[y][x] = "#";
-    //         }
-    //     }
-    //     return layer;
-    // }
-    //
-    // function isPossibleStep (point, figure, arr) {
-    //     let sCount = 0;
-    //     const layer = Object.assign([],arr)
-    //         console.log("point x", point[0], "fig w", figure[0], "x+w", point[0] + figure[0])
-    //     // console.log("l x len", layer[0].length)
-    //     console.log("point y", point[1], "fig h", figure[1], "y+h", point[1] + figure[1])
-    //     // console.log("l y len", layer.length)
-    //     if (point[0] + figure[0] <= layer[0].length && point[1] + figure[1] <= layer.length) {
-    //         // console.log("try calc")
-    //         for (let y = point[1]; y < point[1] + figure[1]; y++){
-    //             // console.log("-", layer[y].join(""))
-    //             for (let x = point[0]; x < point[0] + figure[0]; x++){
-    //                 // console.log("+", x)
-    //                 if (layer[y][x] === "S") sCount++;
-    //             }
-    //         }
-    //     }
-    //     console.log("sCount:", sCount)
-    //     return sCount === 1;
-    // }
-    //
-    // function cFigure (point, figure) {
-    //     const newFigure = [];
-    //     for (let y = point[1]; y < point[1] + figure[1]; y++){
-    //         const newRow = captchaArr[y].slice(point[0], point[0] + figure[0]).join("");
-    //         // console.log("+++++", newRow)
-    //         newFigure.push(newRow);
-    //     }
-    //     return newFigure.join("\n");
-    // }
-    //
-    // function nextLayer(layers, n, successBlocks) {
-    //     console.log("-----------------------------------------------------------------------------------------")
-    //     if (!n) return successBlocks;
-    //
-    //     const layer = layers[layers.length-1];
-    //     printResult(arrToResult(layer), "current layer")
-    //
-    //     const freePosition = getFreePosition(layer);
-    //     console.log("current free pos", freePosition);
-    //
-    //     for (let i = 0; i < rectangles.length; i++) {
-    //         const figure = rectangles[i];
-    //         console.log("-----------")
-    //         console.log("curren figure", figure)
-    //         if (isPossibleStep(freePosition, figure, layer)) {
-    //             console.log("can to put")
-    //             successBlocks.push(cFigure(freePosition, figure));
-    //             const newLayer = layerMaker(Object.assign([], freePosition), figure, Object.assign([], layer));
-    //             // printResult(arrToResult(newLayer), "newLayer")
-    //             layers.push(newLayer);
-    //             const nextSuccessBlocks = nextLayer(Object.assign([], layers), n-1, Object.assign([], successBlocks));
-    //             if (nextSuccessBlocks.length === signCount)
-    //                 return successBlocks;
-    //             else
-    //                 layers.pop();
-    //             successBlocks.pop();
-    //         }
-    //     }
-    //
-    //     return [];
-    // }
-    //
-    // const result = nextLayer([captchaArr], signCount, []);
-    //
-    // //console.log(result);
+// #####################################################################################################################
 
-    return ('result')
+
+    const getEmptyPos = (board) => {
+        const cLayer = Object.assign([],board[board.length-1]);
+        //console.log(cLayer[0].length, cLayer.length)
+        for (let x = 0; x < cLayer[0].length; x++) {
+            for (let y = 0; y < cLayer.length; y++) {
+                if (cLayer[y][x] !== "#" && cLayer[y][x] !== "*")
+                    return [x, y];
+            }
+        }
+
+        return undefined;
+    }
+
+
+    const getLayer = (pos, size, board) => {
+
+        const newLayer = Object.assign([], board[board.length-1]);
+
+        console.log("\nGET LAYER")
+        printLayer(newLayer, "\nGET LAYER ####")
+        console.log("pos", pos, "size", size)
+
+        let sCount = 0;
+
+
+        console.log("end x", pos[0] + size[0] , "need", newLayer[0].length, "       end y", pos[1] + size[1] , "need", newLayer.length)
+
+        if (pos[1] + size[1] > newLayer.length || pos[0] + size[0] > newLayer[0].length) return null;
+
+        for (let y = pos[1]; y < pos[1] + size[1]; y++) {
+            for (let x = pos[0]; x < pos[0] + size[0]; x++) {
+                if (newLayer[y][x] === "S") sCount++;
+            }
+        }
+
+        console.log("S count", sCount)
+
+        if (sCount !== 1) return null;
+
+
+        for (let y = pos[1]; y < pos[1] + size[1]; y++) {
+            for (let x = pos[0]; x < pos[0] + size[0]; x++) {
+                if (newLayer[y][x] === "S") {
+                    newLayer[y][x] = "*";
+                } else {
+                    newLayer[y][x] = "#";
+                }
+            }
+        }
+
+        printLayer(newLayer, "\n---ACCEPT---")
+
+        console.log("\n\n")
+        return newLayer;
+    }
+
+
+
+
+
+    function nextLayout(num, arr) {
+
+        const board = Object.assign([], arr);
+
+        if (num  === 0) return board;
+
+        const pos = getEmptyPos(board);
+        //if (!pos) return board; // ********
+        console.log("\n-----------------------------\nPOS", pos, "level", num);
+        printLayer(board[board.length-1])
+
+        for (let i = 0; i < rectangles.length; i++) {
+
+            const size = rectangles[i];
+
+            const layer = getLayer(pos, size, board);
+            if (layer) console.log("* layer ok *")
+
+            if (layer) {
+
+                board.push(Array.from(layer));
+
+                const res = nextLayout(num - 1, board);
+
+                if (res) return res;
+
+                board.pop();
+            }
+
+        }
+        console.log("==== all figuries, last is ====")
+        board.map(item => printLayer(item))
+        board.pop()
+    }
+
+    const res = nextLayout(signCount, [Object.assign([], captchaArr)])
+
+    return "answer";
 
 }
