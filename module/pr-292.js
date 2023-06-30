@@ -7,8 +7,8 @@ module.exports = function solveCaptcha(captcha) {
 
     function getSCount (point, size) {
         let signCount = 0;
-        for (let y = point[1]; y < captchaArr.length || y < size[1]; y++) {
-            for (let x = point[0]; x < captchaArr[0].length || x < size[0]; x++) {
+        for (let y = 0; y < captchaArr.length; y++) {
+            for (let x = 0; x < captchaArr[0].length; x++) {
                 if (captchaArr[y][x] === "S") signCount++;
             }
         }
@@ -34,12 +34,26 @@ module.exports = function solveCaptcha(captcha) {
 // #####################################################################################################################
 
 
+    // const getEmptyPos = () => {
+    //     const cLayer = Object.assign([], board[board.length-1]);
+    //     //console.log(cLayer[0].length, cLayer.length)
+    //     for (let x = 0; x < cLayer[0].length; x++) {
+    //         for (let y = 0; y < cLayer.length; y++) {
+    //             if (cLayer[y][x] !== "#" && cLayer[y][x] !== "*")
+    //                 return [x, y];
+    //         }
+    //     }
+    //
+    //     return undefined;
+    // }
+
     const getEmptyPos = () => {
         const cLayer = Object.assign([], board[board.length-1]);
         //console.log(cLayer[0].length, cLayer.length)
-        for (let x = 0; x < cLayer[0].length; x++) {
-            for (let y = 0; y < cLayer.length; y++) {
-                if (cLayer[y][x] !== "#" && cLayer[y][x] !== "*")
+        for (let y = 0; y < cLayer.length; y++) {
+            for (let x = 0; x < cLayer[0].length; x++) {
+
+                if (cLayer[y][x] !== "#")
                     return [x, y];
             }
         }
@@ -71,6 +85,7 @@ module.exports = function solveCaptcha(captcha) {
         if (sCount !== 1) return null;
 
         for (let y = pos[1]; y < pos[1] + size[1]; y++) {
+            if (newLayer[y].slice(pos[0], pos[0] + size[0]).indexOf('#') >= 0) return null;
             newLayer[y] = newLayer[y].slice(0, pos[0]) + "#".repeat(size[0]) + newLayer[y].slice(pos[0] + size[0], newLayer[y].length);
             //newSolution.push(newLayer[y].slice(pos[0], size[0]));
         }
