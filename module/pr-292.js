@@ -7,8 +7,9 @@ const printLayer = (arr, message = undefined) => {
 module.exports = function solveCaptcha(captcha) {
 
     const captchaArr = captcha.trim()
-        .split("\n").map(item => item.trim().split(""));
-    printLayer (captchaArr)
+        .split("\n").map(item => item.trim());
+    //printLayer (captchaArr)
+    console.log(captchaArr)
     console.log("x:", captchaArr[0].length, "y:", captchaArr.length)
 
     function getSCount (point, size) {
@@ -40,8 +41,8 @@ module.exports = function solveCaptcha(captcha) {
 // #####################################################################################################################
 
 
-    const getEmptyPos = (board) => {
-        const cLayer = Object.assign([],board[board.length-1]);
+    const getEmptyPos = () => {
+        const cLayer = Object.assign([], board[board.length-1]);
         //console.log(cLayer[0].length, cLayer.length)
         for (let x = 0; x < cLayer[0].length; x++) {
             for (let y = 0; y < cLayer.length; y++) {
@@ -54,21 +55,18 @@ module.exports = function solveCaptcha(captcha) {
     }
 
 
-    const getLayer = (pos, size, board) => {
+    const getLayer = (pos, size) => {
 
         const newLayer = Object.assign([], board[board.length-1]);
 
         console.log("\nGET LAYER")
-        printLayer(newLayer, "\nGET LAYER ####")
         console.log("pos", pos, "size", size)
-
-        let sCount = 0;
-
 
         console.log("end x", pos[0] + size[0] , "need", newLayer[0].length, "       end y", pos[1] + size[1] , "need", newLayer.length)
 
         if (pos[1] + size[1] > newLayer.length || pos[0] + size[0] > newLayer[0].length) return null;
 
+        let sCount = 0;
         for (let y = pos[1]; y < pos[1] + size[1]; y++) {
             for (let x = pos[0]; x < pos[0] + size[0]; x++) {
                 if (newLayer[y][x] === "S") sCount++;
@@ -81,48 +79,45 @@ module.exports = function solveCaptcha(captcha) {
 
 
         for (let y = pos[1]; y < pos[1] + size[1]; y++) {
-            for (let x = pos[0]; x < pos[0] + size[0]; x++) {
-                if (newLayer[y][x] === "S") {
-                    newLayer[y][x] = "*";
-                } else {
-                    newLayer[y][x] = "#";
-                }
-            }
+            newLayer[y] = newLayer[y].slice(0, pos[0]) + "#".repeat(pos[0] + size[0]) + newLayer[y].slice(pos[0] + size[0], newLayer[y].length);
+            // for (let x = pos[0]; x < pos[0] + size[0]; x++) {
+            //     if (newLayer[y][x] === "S") {
+            //         newLayer[y][x] = "*";
+            //     } else {
+            //         newLayer[y][x] = "#";
+            //     }
+            // }
         }
 
-        printLayer(newLayer, "\n---ACCEPT---")
-
+        console.log("\n---ACCEPT---")
+        console.log(newLayer)
         console.log("\n\n")
+
         return newLayer;
     }
 
 
-
-
-
-    function nextLayout(num, arr) {
-
-        const board = Object.assign([], arr);
+    function nextLayout(num) {
 
         if (num  === 0) return board;
 
         const pos = getEmptyPos(board);
         //if (!pos) return board; // ********
         console.log("\n-----------------------------\nPOS", pos, "level", num);
-        printLayer(board[board.length-1])
+        console.log(board[board.length-1])
 
         for (let i = 0; i < rectangles.length; i++) {
 
             const size = rectangles[i];
 
-            const layer = getLayer(pos, size, board);
+            const layer = getLayer(pos, size);
             if (layer) console.log("* layer ok *")
 
             if (layer) {
 
-                board.push(Array.from(layer));
+                board.push(Object.assign([],layer));
 
-                const res = nextLayout(num - 1, board);
+                const res = nextLayout(num - 1);
 
                 if (res) return res;
 
@@ -130,12 +125,14 @@ module.exports = function solveCaptcha(captcha) {
             }
 
         }
+
         console.log("==== all figuries, last is ====")
-        board.map(item => printLayer(item))
-        board.pop()
+        board.map(item => console.log(item))
     }
 
-    const res = nextLayout(signCount, [Object.assign([], captchaArr)])
+    const board = [Object.assign([], captchaArr)];
+
+    const res = nextLayout(signCount)
 
     return "answer";
 
