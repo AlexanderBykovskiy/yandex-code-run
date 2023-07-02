@@ -30,6 +30,7 @@ module.exports = function (pullRequests) {
     for (let i = 0; i < pullRequests.length; i++) {
         console.log(conflictMatrix.slice(i*pullRequests.length, i*pullRequests.length + pullRequests.length))
     }
+    console.log()
 
     function doPRsConflict(pr1, pr2) {
         const i = prToIndex.get(pr1);
@@ -38,18 +39,18 @@ module.exports = function (pullRequests) {
     }
 
 
-    function getNonConflictingPRs (prsSet, mergedPrs) {
-        const result = [];
-        const prsToTest = [...prsSet, ...mergedPrs];
-        prsSet.forEach((pr) => {
-            if (!doPRsConflict(pr, prsToTest)) {
-                result.push(pr);
-            }
-        });
-        return result;
-    }
+    // function getNonConflictingPRs (prsSet, mergedPrs) {
+    //     const result = [];
+    //     const prsToTest = [...prsSet, ...mergedPrs];
+    //     prsSet.forEach((pr) => {
+    //         if (!doPRsConflict(pr, prsToTest)) {
+    //             result.push(pr);
+    //         }
+    //     });
+    //     return result;
+    // }
 
-    console.log("+++",getNonConflictingPRs(pullRequests, ["2", "3"]))
+    //console.log("+++",getNonConflictingPRs(pullRequests, ["2", "3"]))
 
 
     function conflicts(a, b) {
@@ -69,19 +70,20 @@ module.exports = function (pullRequests) {
         return false;
     }
 
-    function mergeAllPrs (pullRequests) {
-        let i = 0;
-        const mergedFiles = [];
-        const mergedPrs = [];
-        while (i < pullRequests.length) {
-            const pr = pullRequests[i];
-            if (!conflicts(mergedFiles, pr.files)) {
-                mergedPrs.push(pr);
-                mergedFiles.push(...pr.files);
+    function search (stack, index) {
+
+        while (stack.length > 0) {
+
+            const item = stack.pop();
+
+            for (let i = 0; i < pullRequests.length; i++) {
+                if (item.id !== pullRequests[i].id && !doPRsConflict(item, pullRequests[i])) {
+                    console.log(item, pullRequests[i], doPRsConflict(item, pullRequests[i]))
+                    //stack.push(stack, stack.length);
+                }
             }
-            i++;
         }
-        return mergedPrs.map(x => x.id);
+
     }
 
     const fullSearch = (prsSet, mergedPrs = [], mergedFilesCount = 0) => {
@@ -90,14 +92,15 @@ module.exports = function (pullRequests) {
 
         // выбираем реквесты, которые не конфликтуют ни с одним из смерженных и оставшихся
         // их можно смержить, и конфликтов не будет
-        const safeToMergePRs = getNonConflictingPRs(prsSet, mergedPrs);
-        mergedPrs = mergedPrs.concat(safeToMergePRs);
-        safeToMergePRs.forEach((pr) => {
-            prsSet.delete(pr);
-            mergedFilesCount += pr.files.length;
-        });
 
-        const pr = prsSet.values().next().value;
+        // const safeToMergePRs = getNonConflictingPRs(prsSet, mergedPrs);
+        // mergedPrs = mergedPrs.concat(safeToMergePRs);
+        // safeToMergePRs.forEach((pr) => {
+        //     prsSet.delete(pr);
+        //     mergedFilesCount += pr.files.length;
+        // });
+        //
+        // const pr = prsSet.values().next().value;
 
         //допиши код
 
@@ -106,12 +109,19 @@ module.exports = function (pullRequests) {
 
 
 
-    let result = [];
+
+
 
     if (!pullRequests.length) return [];
 
     if (pullRequests.length === 1) return [pullRequests[0].id];
 
+    let result = [];
+
+    const stack = Array.from(pullRequests);
+
+
+    search(stack, pullRequests.length-1)
 
     //допиши код
 
