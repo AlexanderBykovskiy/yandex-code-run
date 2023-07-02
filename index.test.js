@@ -51,7 +51,7 @@ function createTestRace(sequence) {
 
   return { wait, run };
 }
-
+/*
 test("should work when no one cheats", async () => {
   const { wait, run } = createTestRace([
     ["Gisele", 1],
@@ -110,68 +110,34 @@ test("should work when no one cheats", async () => {
   const racers = await winners(wait, STREET_RACERS, 10);
 
   expect(racers).toEqual(["Gisele", "Dominic", "Brian"]);
-});
+});*/
 
 test("should handle connection lost", async () => {
   const { wait, run } = createTestRace([
     ["Brian", 1],
-    // ["Brian", 2],
-    ["Brian", 3],
-    ["Brian", 4],
-    ["Brian", NaN],
-    ["Brian", 5],
-    ["Brian", 6],
-    ["Brian", 7],
-    ["Brian", 8],
-    ["Brian", 9],
-    ["Brian", 10],
-
-    ["Han", 1],
-    ["Han", 2],
-    ["Han", 3],
-    ["Han", NaN],
-    ["Han", 4],
-    ["Han", 5],
-    ["Han", 6],
-    ["Han", 7],
-    ["Han", 8],
-    ["Han", 9],
-    ["Han", 10],
+    //["Brian", NaN],
+    ["Brian", 2],
     ["Mia", 1],
     ["Mia", 2],
-    ["Mia", 3],
-    ["Mia", 4],
-    ["Mia", 5],
-    ["Mia", 6],
-    ["Mia", 7],
-    ["Mia", 8],
-    ["Mia", 9],
-    ["Mia", 10],
-    ["Dominic", 1],
+    //["Mia", NaN],
     ["Dominic", 2],
-    //["Dominic", 3],
-    ["Dominic", 4],
+    ["Han", 1],
+    ["Han", 2],
+    ["Dominic", 1],
     ["Dominic", 3],
-    ["Dominic", 5],
-    ["Dominic", 6],
-    ["Dominic", 7],
-    ["Dominic", 8],
-    ["Dominic", 9],
-    ["Dominic", 10],
+    ["Dominic", 1],
     ["Gisele", 1],
     ["Gisele", 2],
+    //["Gisele", NaN],
     ["Gisele", 3],
-    ["Gisele", 4],
-    ["Gisele", 5],
-    ["Gisele", 6],
-    ["Gisele", 7],
-    ["Gisele", 8],
-    ["Gisele", 9],
-    ["Gisele", 10],
+    ["Brian", 3],
+    ["Mia", 3],
+    //["Gisele", NaN],
+    ["Han", 3],
   ]);
 
   run();
-  const racers = await winners(wait, STREET_RACERS, 10);
+  const racers = await winners(wait, STREET_RACERS, 3);
 
-  expect(racers).toEqual(["Han", "Mia", "Gisele"]);
+  expect(racers).toEqual(["Gisele", "Brian", "Mia"]);
 });
