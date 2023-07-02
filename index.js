@@ -27,35 +27,37 @@ module.exports = function winners(wait, pushResult, STREET_RACERS, N) {
         }
     }
 
-    const allPromises = Array(N).fill("*").map(async (_, checkpoint) => {
 
-        return STREET_RACERS.map(function (streetRacer) {
 
-            function waiting() {
-                return new Promise(function(resolve, reject) {
-                    wait(streetRacer, checkpoint + 1, callback);
-                    const timer = setTimeout(()=> {
-                        clearTimeout(timer);
-                    }, 150);
-                });
-            }
+    function waiting(streetRacer, checkpoint, callback) {
+        return new Promise(function(resolve, reject) {
+            wait(streetRacer, checkpoint, callback);
+            const timer = setTimeout(()=> {
+                resolve();
+                clearTimeout(timer);
+            }, 150);
+        });
+    }
+
+    const allPromises = [];
+
+    for (let checkpoint = 1; checkpoint <= N; checkpoint++) {
+        STREET_RACERS.forEach((streetRacer) => {
 
             const callback = (lost = undefined) => {
-                if (lost) {
-                    //console.log("lost");
-                    waiting(streetRacer, checkpoint + 1, callback);
+                    if (lost) {
+                        //console.log("lost");
+                        allPromises.push(waiting(streetRacer, checkpoint, callback));
 
-                } else {
-                    calculator(streetRacer, checkpoint+1);
-                    //console.log(streetRacer, checkpoint+1, 'pass');
-                }
-            };
+                    } else {
+                        calculator(streetRacer, checkpoint+1);
+                        //console.log(streetRacer, checkpoint+1, 'pass');
+                    }
+                };
 
-            return waiting();
-
-        });
-
-    })
+                allPromises.push(waiting(streetRacer, checkpoint, callback))
+        })
+    }
 
     Promise.all(allPromises).then();
 
