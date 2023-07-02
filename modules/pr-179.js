@@ -109,9 +109,6 @@ module.exports = function (pullRequests) {
 
 
 
-
-
-
     if (!pullRequests.length) return [];
 
     if (pullRequests.length === 1) return [pullRequests[0].id];
