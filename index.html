@@ -149,10 +149,54 @@
     console.log(tagZone)
 
     const tagList = document.querySelectorAll('.Tag');
+    const letterList = document.querySelectorAll('.Letter');
 
     for (const tag of tagList) {
         tag.draggable = true;
+        tag.addEventListener('drag', (evt) => {
+            tag.classList.add('Tag_dragged');
+        });
+        tag.addEventListener('drop', (evt) => {
+            tag.classList.remove('Tag_dragged');
+        });
     }
+
+    for (const letter of letterList) {
+        letter.addEventListener('dragover', (evt) => {
+            evt.preventDefault();
+            console.log(evt.target)
+        });
+    }
+
+    tagZone.addEventListener('dragover', (evt) => {
+        evt.preventDefault();
+
+        const activeElement = tagZone.querySelector('.Tag_dragged');
+        const currentElement = evt.target;
+
+        const isMoveable = activeElement !== currentElement && currentElement.classList.contains('Tag');
+        if (!isMoveable) {
+            return;
+        }
+
+        const nextElement = getNextElement(evt.clientY, currentElement);
+
+        /*const nextElement = (currentElement === activeElement.nextElementSibling)
+            ? currentElement.nextElementSibling
+            : currentElement;*/
+
+        if (
+            nextElement &&
+            activeElement === nextElement.previousElementSibling ||
+            activeElement === nextElement
+        ) {
+            return;
+        }
+
+        tagZone.insertBefore(activeElement, nextElement);
+
+    });
+
 
     tagZone.addEventListener('dragstart', (evt) => {
         letZone.classList.add('Letters_dropzone');
@@ -173,7 +217,16 @@
     });
 
 
+    const getNextElement = (cursorPosition, currentElement) => {
+        const currentElementCoord = currentElement.getBoundingClientRect();
+        const currentElementCenter = currentElementCoord.y + currentElementCoord.height / 2;
 
+        const nextElement = (cursorPosition < currentElementCenter) ?
+            currentElement :
+            currentElement.nextElementSibling;
+
+        return nextElement;
+    };
 
 
 
