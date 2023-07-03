@@ -144,74 +144,37 @@
   window.onSolutionReady && window.onSolutionReady();
 
 
-    function onTagClick(e) {
+    const letZone = document.querySelector('.Letters');
+    const tagZone = document.querySelector('.Tags');
+    console.log(tagZone)
 
-        const element = e.target;
+    const tagList = document.querySelectorAll('.Tag');
 
-        element.classList.add('Tag_dragged');
-
-        let coords = getCoords(element);
-        let shiftX = e.pageX - coords.left;
-        let shiftY = e.pageY - coords.top;
-
-        element.style.position = 'absolute';
-        document.body.appendChild(element);
-        moveAt(e);
-
-        element.style.zIndex = '1000';
-        element.style.cursor = 'cursor-pointer';
-
-        function moveAt(e) {
-            element.style.left = e.pageX - shiftX + 'px';
-            element.style.top = e.pageY - shiftY + 'px';
-        }
-
-        document.onmousemove = function(e) {
-            moveAt(e);
-        };
-
-        element.onmouseup = function() {
-            document.onmousemove = null;
-            element.onmouseup = null;
-            element.classList.remove('Tag_dragged');
-        };
-
+    for (const tag of tagList) {
+        tag.draggable = true;
     }
 
+    tagZone.addEventListener('dragstart', (evt) => {
+        letZone.classList.add('Letters_dropzone');
+    });
 
-    function getCoords(elem) {   // кроме IE8-
-        let box = elem.getBoundingClientRect();
-        return {
-            top: box.top + scrollY,
-            left: box.left + scrollX
-        };
-
-    }
-
-
-    /*function onTagDrop(e) {
-        const element = e.target;
-        element.classList.remove('Tag_dragged');
-        document.onmousemove = null;
-        element.onmouseup = null;
+    tagZone.addEventListener('dragend', (evt) => {
         letZone.classList.remove('Letters_dropzone');
+    });
 
-    }*/
+    letZone.addEventListener('dragstart', (evt) => {
+        letZone.classList.add('Letters_dropzone');
+        tagZone.classList.add('Tags_dropzone');
+    });
 
-    function defaultDagStart(e) {
-        return false;
-    }
+    letZone.addEventListener('dragend', (evt) => {
+        letZone.classList.remove('Letters_dropzone');
+        tagZone.classList.remove('Tags_dropzone');
+    });
 
-    const tagList = document.querySelectorAll(".Tag");
-    tagList.forEach(item => {
-        console.log(item)
-        item.addEventListener('mousedown', onTagClick);
-        //item.addEventListener('mouseup', onTagDrop);
-        item.addEventListener('dragstart', defaultDagStart);
-    })
 
-    const letZone = document.querySelector(".Letters");
-    //const tagZone = document.querySelector(".Tags");
+
+
 
 
 </script>
