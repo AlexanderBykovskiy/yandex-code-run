@@ -34,9 +34,9 @@ module.exports = function (pullRequests) {
     //console.log()
 
 
-    const getPRIndex = (pr) => {
-        pullRequests.findIndex(item => item === pr)
-    }
+    // const getPRIndex = (pr) => {
+    //     pullRequests.findIndex(item => item === pr)
+    // }
 
     const getNonConflictingPRsIndexes = () => {
         const nCPRIndexes = [];
@@ -93,22 +93,6 @@ module.exports = function (pullRequests) {
         }
 
         return false;
-    }
-
-    function search (stack, mergedFiles, mergedRequests, freeFilesCount) {
-
-        while (stack.length > 0) {
-
-            const item = stack.pop();
-
-            for (let i = 0; i < pullRequests.length; i++) {
-                if (item.id !== pullRequests[i].id && !doPRsConflict(item, pullRequests[i])) {
-                    console.log(item, pullRequests[i], doPRsConflict(item, pullRequests[i]))
-                    //stack.push(stack, stack.length);
-                }
-            }
-        }
-
     }
 
 
@@ -196,29 +180,6 @@ module.exports = function (pullRequests) {
 
     }
 
-    /*result.sort((a,b) => {
-        if (b.filesCount === a.filesCount) {
-            if (a.mergedIndexes.length === b.mergedIndexes.length) {
-               // console.log(a.mergedIndexes.length)
-                for (let i = 0; i < a.mergedIndexes.length; i++) {
-                    //console.log(i, pullRequests[a.mergedIndexes[i]].created)
-                    if (pullRequests[a.mergedIndexes[i]].created - pullRequests[b.mergedIndexes[i]].created !== 0) return pullRequests[a.mergedIndexes[i]].created - pullRequests[b.mergedIndexes[i]].created
-                }
-            } else {
-                return !!(b.mergedIndexes.length - a.mergedIndexes.length)
-            }
-
-        } else {
-            return !!(b.filesCount - a.filesCount)
-        }
-    } )*/
-
-    //console.log(result)
-
-    //console.log(totalResult)
-    //console.log(totalResult.mergedIndexes.map(index => pullRequests[index].id))
-
-    //return result[0].mergedIndexes.map(index => pullRequests[index].id);
 
     return totalResult.mergedIndexes.map(index => pullRequests[index].id);
 
