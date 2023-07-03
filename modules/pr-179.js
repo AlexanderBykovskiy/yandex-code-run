@@ -118,7 +118,11 @@ module.exports = function (pullRequests) {
 
     if (pullRequests.length === 1) return [pullRequests[0].id];
 
-    const result = [];
+
+    //const result = [];
+
+
+    let totalResult = undefined;
 
 
     const filesCount = (arrIndexes) => {
@@ -160,13 +164,39 @@ module.exports = function (pullRequests) {
             newObj.mergedIndexes = newMergedPrIndexes
                 .sort((a, b) => pullRequests[a].created - pullRequests[b].created);
             newObj.filesCount = newFilesCount;
+
             //console.log("Finish", item.filesCount)
-            result.push(newObj)
+
+            //result.push(newObj)
+
+            if (totalResult) {
+                if (newObj.filesCount === totalResult.filesCount) {
+
+                    if (newObj.mergedIndexes.length === totalResult.mergedIndexes.length) {
+
+                        for (let i = 0; i < newObj.mergedIndexes.length; i++) {
+                            if (pullRequests[newObj.mergedIndexes[i]].created < pullRequests[totalResult.mergedIndexes[i]].created) {
+                                totalResult = newObj;
+                                break;
+                            }
+                        }
+
+                    } else if (newObj.mergedIndexes.length > totalResult.mergedIndexes.length) {
+                        totalResult = newObj;
+                    }
+
+                } else if (totalResult.filesCount - newObj.filesCount < 0) {
+                    totalResult = newObj;
+                }
+            } else {
+                totalResult = newObj;
+            }
+
         }
 
     }
 
-    result.sort((a,b) => {
+    /*result.sort((a,b) => {
         if (b.filesCount === a.filesCount) {
             if (a.mergedIndexes.length === b.mergedIndexes.length) {
                // console.log(a.mergedIndexes.length)
@@ -181,10 +211,15 @@ module.exports = function (pullRequests) {
         } else {
             return !!(b.filesCount - a.filesCount)
         }
-    } )
+    } )*/
 
     //console.log(result)
 
+    //console.log(totalResult)
+    //console.log(totalResult.mergedIndexes.map(index => pullRequests[index].id))
 
-    return result[0].mergedIndexes.map(index => pullRequests[index].id);
+    //return result[0].mergedIndexes.map(index => pullRequests[index].id);
+
+    return totalResult.mergedIndexes.map(index => pullRequests[index].id);
+
 }
