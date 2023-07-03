@@ -25,32 +25,57 @@ module.exports = function (pullRequests) {
         }
     }
 
-    console.log('conflictMatrix')
-    console.log(conflictMatrix.length)
+    const rowConflictMatrix = [];
     for (let i = 0; i < pullRequests.length; i++) {
-        console.log(conflictMatrix.slice(i*pullRequests.length, i*pullRequests.length + pullRequests.length))
+        rowConflictMatrix.push(conflictMatrix.slice(i*pullRequests.length, i*pullRequests.length + pullRequests.length))
     }
-    console.log()
+
+    //console.log(rowConflictMatrix)
+    //console.log()
+
+
+    const getPRIndex = (pr) => {
+        pullRequests.findIndex(item => item === pr)
+    }
+
+    const getNonConflictingPRsIndexes = () => {
+        const nCPRIndexes = [];
+        for (let i = 0; i < pullRequests.length; i++) {
+            const conflict = rowConflictMatrix[i].find(item => item !== 0);
+            if (!conflict)
+                nCPRIndexes.push(i);
+        }
+
+        return nCPRIndexes;
+    }
+
+    const notConflictIndexes = getNonConflictingPRsIndexes();
+
+    //console.log("not conflict", notConflictIndexes, notConflictIndexes.map(item => pullRequests[item].id))
+
+    const getConflictingPRsIndexes = () => {
+        const notConf = getNonConflictingPRsIndexes();
+        const confIndexes = [];
+        for (let i = 0; i < pullRequests.length; i++) {
+            if (!notConf.includes(i)) {
+                confIndexes.push(i);
+            }
+        }
+        return confIndexes;
+    }
+
+    const conflictIndexes = getConflictingPRsIndexes();
+
+    //console.log("conflict", conflictIndexes, conflictIndexes.map(item => pullRequests[item].id))
+    //console.log()
+
+
 
     function doPRsConflict(pr1, pr2) {
         const i = prToIndex.get(pr1);
         const j = prToIndex.get(pr2);
         return conflictMatrix[i * pullRequests.length + j] === 1;
     }
-
-
-    // function getNonConflictingPRs (prsSet, mergedPrs) {
-    //     const result = [];
-    //     const prsToTest = [...prsSet, ...mergedPrs];
-    //     prsSet.forEach((pr) => {
-    //         if (!doPRsConflict(pr, prsToTest)) {
-    //             result.push(pr);
-    //         }
-    //     });
-    //     return result;
-    // }
-
-    //console.log("+++",getNonConflictingPRs(pullRequests, ["2", "3"]))
 
 
     function conflicts(a, b) {
@@ -70,7 +95,7 @@ module.exports = function (pullRequests) {
         return false;
     }
 
-    function search (stack, index) {
+    function search (stack, mergedFiles, mergedRequests, freeFilesCount) {
 
         while (stack.length > 0) {
 
@@ -86,26 +111,6 @@ module.exports = function (pullRequests) {
 
     }
 
-    const fullSearch = (prsSet, mergedPrs = [], mergedFilesCount = 0) => {
-
-        //допиши код
-
-        // выбираем реквесты, которые не конфликтуют ни с одним из смерженных и оставшихся
-        // их можно смержить, и конфликтов не будет
-
-        // const safeToMergePRs = getNonConflictingPRs(prsSet, mergedPrs);
-        // mergedPrs = mergedPrs.concat(safeToMergePRs);
-        // safeToMergePRs.forEach((pr) => {
-        //     prsSet.delete(pr);
-        //     mergedFilesCount += pr.files.length;
-        // });
-        //
-        // const pr = prsSet.values().next().value;
-
-        //допиши код
-
-    }
-
 
 
 
@@ -113,14 +118,73 @@ module.exports = function (pullRequests) {
 
     if (pullRequests.length === 1) return [pullRequests[0].id];
 
-    let result = [];
-
-    const stack = Array.from(pullRequests);
+    const result = [];
 
 
-    search(stack, pullRequests.length-1)
+    const filesCount = (arrIndexes) => {
+        //console.log("++++++", arrIndexes)
+        let count = 0;
+        arrIndexes.forEach(item => count += pullRequests[item].files.length)
+        //console.log('---------count', count)
+        return count
+    }
 
-    //допиши код
+    const stack = conflictIndexes.map(item => ({
+        prIndex: item,
+        mergedIndexes: Array.from(notConflictIndexes),
+        filesCount: filesCount(notConflictIndexes)
+    }));
 
-    return result;
+    while (stack.length) {
+
+        const item = stack.pop();
+
+        const newMergedPrIndexes = Array.from(item.mergedIndexes);
+        newMergedPrIndexes.push(item.prIndex);
+        //console.log('newMergedPrIndexes', newMergedPrIndexes)
+
+        const newFilesCount = item.filesCount + pullRequests[item.prIndex].files.length;
+        //console.log("############", newFilesCount)
+
+
+        let steps = 0;
+        for (let i = 0; i < pullRequests.length; i++) {
+            if (!newMergedPrIndexes.includes(i) && !doPRsConflict(pullRequests[i], pullRequests[item.prIndex])) {
+                //console.log("+++",item.filesCount)
+                stack.push({prIndex: i, mergedIndexes: Array.from(newMergedPrIndexes), filesCount: item.filesCount + pullRequests[i].files.length})
+                steps++;
+            }
+        }
+        if (steps === 0) {
+            const newObj = Object.assign({}, item);
+            newObj.mergedIndexes = newMergedPrIndexes
+                .sort((a, b) => pullRequests[a].created - pullRequests[b].created);
+            newObj.filesCount = newFilesCount;
+            //console.log("Finish", item.filesCount)
+            result.push(newObj)
+        }
+
+    }
+
+    result.sort((a,b) => {
+        if (b.filesCount === a.filesCount) {
+            if (a.mergedIndexes.length === b.mergedIndexes.length) {
+               // console.log(a.mergedIndexes.length)
+                for (let i = 0; i < a.mergedIndexes.length; i++) {
+                    //console.log(i, pullRequests[a.mergedIndexes[i]].created)
+                    if (pullRequests[a.mergedIndexes[i]].created - pullRequests[b.mergedIndexes[i]].created !== 0) return pullRequests[a.mergedIndexes[i]].created - pullRequests[b.mergedIndexes[i]].created
+                }
+            } else {
+                return !!(b.mergedIndexes.length - a.mergedIndexes.length)
+            }
+
+        } else {
+            return !!(b.filesCount - a.filesCount)
+        }
+    } )
+
+    //console.log(result)
+
+
+    return result[0].mergedIndexes.map(index => pullRequests[index].id);
 }
