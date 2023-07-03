@@ -144,91 +144,209 @@
   window.onSolutionReady && window.onSolutionReady();
 
 
-    const letZone = document.querySelector('.Letters');
+
+    // TAG EVENTS
+    function onTagDrag (e) {
+
+        e.preventDefault();
+
+        if (!dragElement) {
+            dragElement = e.target;
+        }
+
+        if (!tagZoneSourse) {
+            if (e.target.parentElement.classList.contains('Tags')) {
+                tagZoneSourse = "Tags";
+            }
+        }
+
+    }
+
+    function onTagDragEnd (e) {
+
+        e.preventDefault();
+
+        dragElement = undefined;
+        tagZoneSourse = undefined;
+
+    }
+
+    // LETTER EVENTS
+    function onLetterDragover (e) {
+
+        e.preventDefault();
+
+    }
+
+    function onLetterDrop (e) {
+
+        e.preventDefault();
+
+        if (!(Array.from(e.target.closest('.Letter').querySelectorAll(".Tag")).map(item => item.innerHTML)).includes(dragElement.innerHTML)) {
+
+            const newTag = !!tagZoneSourse ? dragElement.cloneNode( true ) : dragElement;
+
+            newTag.addEventListener('drag', onTagDrag);
+            newTag.addEventListener('dragend', onTagDragEnd);
+
+            e.target.closest('.Letter').append(newTag);
+
+        }
+
+    }
+
+    // TAG ZONE EVENTS
+    function onTagZoneDragover (e) {
+
+        e.preventDefault();
+
+    }
+
+    function onTagZoneDrop (e) {
+
+        e.preventDefault();
+
+        dragElement.remove();
+
+    }
+
+
+
     const tagZone = document.querySelector('.Tags');
-    console.log(tagZone)
+    const letZone = document.querySelector('.Letters');
 
     const tagList = document.querySelectorAll('.Tag');
     const letterList = document.querySelectorAll('.Letter');
 
+
+    let dragElement = undefined;
+    let tagZoneSourse = undefined;
+
+
+    // TAG
     for (const tag of tagList) {
+
         tag.draggable = true;
-        tag.addEventListener('drag', (evt) => {
-            tag.classList.add('Tag_dragged');
+
+        tag.addEventListener('drag', onTagDrag);
+
+        tag.addEventListener('dragend', onTagDragEnd);
+
+    }
+
+    // LETTER ZONE
+    for (const letter of letterList) {
+
+        letter.addEventListener('dragover', onLetterDragover);
+
+        letter.addEventListener('drop', onLetterDrop);
+
+    }
+
+    // TAG ZONE
+    tagZone.addEventListener('dragover', onTagZoneDragover);
+    tagZone.addEventListener('drop', onTagZoneDrop);
+
+
+
+
+
+
+/*
+    for (const tag of tagList) {
+.draggable = true;
+               tag.addEventListener('drag', (evt) => {
+
+            if (!dragElement)
+                dragElement = tag;
+
+            if (!tagZoneSourse) {
+                if (tag.parentElement.classList.contains('Tags')) {
+                    tagZoneSourse = "Tags";
+                }
+            }
+
+            //tag.classList.add('Tag_dragged');
+
             tag.addEventListener('dragend', (evt) => {
-                tag.classList.remove('Tag_dragged');
+                dragElement = undefined;
+                tagZoneSourse = undefined;
+                //tag.classList.remove('Tag_dragged');
             });
+
         });
 
     }
 
     for (const letter of letterList) {
+
+        letter.addEventListener('dragenter', (evt) => {
+
+            /!*const letterTags = Array.from(letter.querySelectorAll(".Tag")).map(item => item.innerHTML);
+
+            if (!letterTags.includes(dragElement.innerHTML)) {
+                letter.classList.add('Letter_dragovered');
+            }
+
+            letter.addEventListener('dragleave', (evt) => {
+                letter.classList.remove('Letter_dragovered');
+            });*!/
+
+        });
+
         letter.addEventListener('dragover', (evt) => {
             evt.preventDefault();
-            console.log(evt.target)
         });
-    }
 
-    tagZone.addEventListener('dragover', (evt) => {
+        letter.addEventListener('drop', (evt) => {
+            evt.preventDefault();
+            if (!(Array.from(evt.target.querySelectorAll(".Tag")).map(item => item.innerHTML)).includes(dragElement.innerHTML))
+                evt.target.append(dragElement.cloneNode( true ));
+        });
+
+    }*/
+
+    /*tagZone.addEventListener('dragstart', (evt) => {
+        letZone.classList.add('Letters_dropzone');
+    });
+
+    tagZone.addEventListener('dragend', (evt) => {
+        letZone.classList.remove('Letters_dropzone');
+    });
+
+    letZone.addEventListener('dragstart', (evt) => {
+        letZone.classList.add('Letters_dropzone');
+        tagZone.classList.add('Tags_dropzone');
+    });
+
+    letZone.addEventListener('dragend', (evt) => {
+        letZone.classList.remove('Letters_dropzone');
+        tagZone.classList.remove('Tags_dropzone');
+    });
+
+
+    tagZone.addEventListener('dragenter', (evt) => {
+        if (!tagZoneSourse)
+            tagZone.classList.add('Tags_dragovered');
+
+        tagZone.addEventListener("drop", (evt) => {
+            evt.preventDefault();
+            console.log('+++')
+        })
+    });
+
+    tagZone.addEventListener('dragleave', (evt) => {
+        tagZone.classList.remove('Tags_dragovered');
+    });*/
+
+    /*tagZone.addEventListener('dragover', (evt) => {
         evt.preventDefault();
+    });
 
-        const activeElement = tagZone.querySelector('.Tag_dragged');
-        const currentElement = evt.target;
-
-        const isMoveable = activeElement !== currentElement && currentElement.classList.contains('Tag');
-        if (!isMoveable) {
-            return;
-        }
-
-        const nextElement = (currentElement === activeElement.nextElementSibling)
-            ? currentElement.nextElementSibling
-            : currentElement;
-
-        /*const nextElement = getNextElement(evt.clientY, currentElement);
-
-        if (
-            nextElement &&
-            activeElement === nextElement.previousElementSibling ||
-            activeElement === nextElement
-        ) {
-            return;
-        }*/
-
-        tagZone.insertBefore(activeElement, nextElement);
-
-});
-
-
-tagZone.addEventListener('dragstart', (evt) => {
-    letZone.classList.add('Letters_dropzone');
-});
-
-tagZone.addEventListener('dragend', (evt) => {
-    letZone.classList.remove('Letters_dropzone');
-});
-
-letZone.addEventListener('dragstart', (evt) => {
-    letZone.classList.add('Letters_dropzone');
-    tagZone.classList.add('Tags_dropzone');
-});
-
-letZone.addEventListener('dragend', (evt) => {
-    letZone.classList.remove('Letters_dropzone');
-    tagZone.classList.remove('Tags_dropzone');
-});
-
-
-const getNextElement = (cursorPosition, currentElement) => {
-    const currentElementCoord = currentElement.getBoundingClientRect();
-    const currentElementCenter = currentElementCoord.y + currentElementCoord.height / 2;
-
-    const nextElement = (cursorPosition < currentElementCenter) ?
-        currentElement :
-        currentElement.nextElementSibling;
-
-    return nextElement;
-};
-
+    tagZone.addEventListener('drop', (evt) => {
+        evt.preventDefault();
+        dragElement.remove()
+    });*/
 
 
 </script>
