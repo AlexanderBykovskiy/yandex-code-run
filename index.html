@@ -160,11 +160,15 @@
             }
         }
 
+        e.target.classList.add('Tag_dragged');
+
     }
 
     function onTagDragEnd (e) {
 
         e.preventDefault();
+
+        e.target.classList.remove('Tag_dragged');
 
         dragElement = undefined;
         tagZoneSourse = undefined;
@@ -191,6 +195,8 @@
 
             e.target.closest('.Letter').append(newTag);
 
+            Array.from(document.querySelectorAll('.Tag')).forEach(item => item.classList.remove('Tag_dragged'));
+
         }
 
     }
@@ -206,7 +212,8 @@
 
         e.preventDefault();
 
-        dragElement.remove();
+        if (!tagZoneSourse)
+            dragElement.remove();
 
     }
 
