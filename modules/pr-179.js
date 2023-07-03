@@ -25,13 +25,21 @@ module.exports = function (pullRequests) {
         }
     }
 
+    const filesList = pullRequests.reduce((arr, item) => [...arr, ...item.files], []);
+    console.log(filesList)
+
+    const setFiles = new Set(filesList);
+    console.log(setFiles, setFiles.size)
+    const uniqFilesCount = setFiles.size;
+
+
     const rowConflictMatrix = [];
     for (let i = 0; i < pullRequests.length; i++) {
         rowConflictMatrix.push(conflictMatrix.slice(i*pullRequests.length, i*pullRequests.length + pullRequests.length))
     }
 
-    //console.log(rowConflictMatrix)
-    //console.log()
+    console.log(rowConflictMatrix)
+    console.log()
 
 
     // const getPRIndex = (pr) => {
@@ -148,6 +156,7 @@ module.exports = function (pullRequests) {
 
 
         let steps = 0;
+
         for (let i = 0; i < pullRequests.length; i++) {
             if (!newMergedPrIndexes.includes(i) && !doPRsConflict(pullRequests[i], pullRequests[item.prIndex])) {
                 //console.log("+++",item.filesCount)
@@ -158,10 +167,10 @@ module.exports = function (pullRequests) {
                     time: item.time + pullRequests[i].created,
                 }
                 const sum = ""
-                //newObj.time =
-                //if(newObj.prIndex === 1) console.log("++++", newObj)
-                console.log("++++", newObj.prIndex, newObj.mergedIndexes, newObj.filesCount, newObj.time)
+                //if(newObj.prIndex === 1) console.log("++++", newObj.prIndex, newObj.mergedIndexes, newObj.filesCount, newObj.time)
+                console.log("++++", newObj.prIndex, newObj.mergedIndexes, newObj.filesCount, uniqFilesCount - newObj.filesCount, newObj.time)
                 stack.push(newObj)
+
                 steps++;
             }
         }
