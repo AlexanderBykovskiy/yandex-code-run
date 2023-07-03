@@ -155,10 +155,11 @@
         tag.draggable = true;
         tag.addEventListener('drag', (evt) => {
             tag.classList.add('Tag_dragged');
+            tag.addEventListener('dragend', (evt) => {
+                tag.classList.remove('Tag_dragged');
+            });
         });
-        tag.addEventListener('drop', (evt) => {
-            tag.classList.remove('Tag_dragged');
-        });
+
     }
 
     for (const letter of letterList) {
@@ -179,11 +180,11 @@
             return;
         }
 
-        const nextElement = getNextElement(evt.clientY, currentElement);
-
-        /*const nextElement = (currentElement === activeElement.nextElementSibling)
+        const nextElement = (currentElement === activeElement.nextElementSibling)
             ? currentElement.nextElementSibling
-            : currentElement;*/
+            : currentElement;
+
+        /*const nextElement = getNextElement(evt.clientY, currentElement);
 
         if (
             nextElement &&
@@ -191,42 +192,42 @@
             activeElement === nextElement
         ) {
             return;
-        }
+        }*/
 
         tagZone.insertBefore(activeElement, nextElement);
 
-    });
+});
 
 
-    tagZone.addEventListener('dragstart', (evt) => {
-        letZone.classList.add('Letters_dropzone');
-    });
+tagZone.addEventListener('dragstart', (evt) => {
+    letZone.classList.add('Letters_dropzone');
+});
 
-    tagZone.addEventListener('dragend', (evt) => {
-        letZone.classList.remove('Letters_dropzone');
-    });
+tagZone.addEventListener('dragend', (evt) => {
+    letZone.classList.remove('Letters_dropzone');
+});
 
-    letZone.addEventListener('dragstart', (evt) => {
-        letZone.classList.add('Letters_dropzone');
-        tagZone.classList.add('Tags_dropzone');
-    });
+letZone.addEventListener('dragstart', (evt) => {
+    letZone.classList.add('Letters_dropzone');
+    tagZone.classList.add('Tags_dropzone');
+});
 
-    letZone.addEventListener('dragend', (evt) => {
-        letZone.classList.remove('Letters_dropzone');
-        tagZone.classList.remove('Tags_dropzone');
-    });
+letZone.addEventListener('dragend', (evt) => {
+    letZone.classList.remove('Letters_dropzone');
+    tagZone.classList.remove('Tags_dropzone');
+});
 
 
-    const getNextElement = (cursorPosition, currentElement) => {
-        const currentElementCoord = currentElement.getBoundingClientRect();
-        const currentElementCenter = currentElementCoord.y + currentElementCoord.height / 2;
+const getNextElement = (cursorPosition, currentElement) => {
+    const currentElementCoord = currentElement.getBoundingClientRect();
+    const currentElementCenter = currentElementCoord.y + currentElementCoord.height / 2;
 
-        const nextElement = (cursorPosition < currentElementCenter) ?
-            currentElement :
-            currentElement.nextElementSibling;
+    const nextElement = (cursorPosition < currentElementCenter) ?
+        currentElement :
+        currentElement.nextElementSibling;
 
-        return nextElement;
-    };
+    return nextElement;
+};
 
 
 
