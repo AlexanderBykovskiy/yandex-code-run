@@ -135,6 +135,7 @@ module.exports = function (pullRequests) {
         prIndex: item,
         mergedIndexes: Array.from(notConflictIndexes),
         filesCount: filesCount(notConflictIndexes),
+        confFilesCount: 0,
         time: itemCount(notConflictIndexes)
     }));
 
@@ -156,6 +157,9 @@ module.exports = function (pullRequests) {
 
 
         let steps = 0;
+        let conflictFilesCount = item.confFilesCount;
+
+        if (totalResult && totalResult.prIndex === item.prIndex && totalResult.mergedIndexes.includes(item.prIndex)) continue;
 
         for (let i = 0; i < pullRequests.length; i++) {
             if (!newMergedPrIndexes.includes(i) && !doPRsConflict(pullRequests[i], pullRequests[item.prIndex])) {
@@ -164,14 +168,17 @@ module.exports = function (pullRequests) {
                     prIndex: i,
                     mergedIndexes: Array.from(newMergedPrIndexes),
                     filesCount: item.filesCount + pullRequests[i].files.length,
+                    confFilesCount: conflictFilesCount,
                     time: item.time + pullRequests[i].created,
                 }
                 const sum = ""
                 //if(newObj.prIndex === 1) console.log("++++", newObj.prIndex, newObj.mergedIndexes, newObj.filesCount, newObj.time)
-                console.log("++++", newObj.prIndex, newObj.mergedIndexes, newObj.filesCount, uniqFilesCount - newObj.filesCount, newObj.time)
+                console.log("++++", newObj.prIndex, newObj.mergedIndexes, newObj.filesCount, newObj.confFilesCount, newObj.time)
                 stack.push(newObj)
 
                 steps++;
+            } else {
+                //conflictFilesCount += pullRequests[i].files.length;
             }
         }
 
