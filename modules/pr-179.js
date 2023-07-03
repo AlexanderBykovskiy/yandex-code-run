@@ -117,11 +117,20 @@ module.exports = function (pullRequests) {
         return count
     }
 
+    const itemCount = (arrIndexes) => {
+        let sum = 0;
+        arrIndexes.forEach(item => sum += pullRequests[item].created)
+        return sum;
+    }
+
     const stack = conflictIndexes.map(item => ({
         prIndex: item,
         mergedIndexes: Array.from(notConflictIndexes),
-        filesCount: filesCount(notConflictIndexes)
+        filesCount: filesCount(notConflictIndexes),
+        time: itemCount(notConflictIndexes)
     }));
+
+    //console.log(stack)
 
     while (stack.length) {
 
@@ -134,44 +143,50 @@ module.exports = function (pullRequests) {
         const newFilesCount = item.filesCount + pullRequests[item.prIndex].files.length;
         //console.log("############", newFilesCount)
 
+        const newTimeCount = item.time + pullRequests[item.prIndex].created;
+        //console.log(newTimeCount, pullRequests[item.prIndex].created, newTimeCount < pullRequests[item.prIndex].created)
+
 
         let steps = 0;
         for (let i = 0; i < pullRequests.length; i++) {
             if (!newMergedPrIndexes.includes(i) && !doPRsConflict(pullRequests[i], pullRequests[item.prIndex])) {
                 //console.log("+++",item.filesCount)
-                stack.push({prIndex: i, mergedIndexes: Array.from(newMergedPrIndexes), filesCount: item.filesCount + pullRequests[i].files.length})
+                const newObj = {
+                    prIndex: i,
+                    mergedIndexes: Array.from(newMergedPrIndexes),
+                    filesCount: item.filesCount + pullRequests[i].files.length,
+                    time: item.time + pullRequests[i].created,
+                }
+                const sum = ""
+                //newObj.time =
+                //if(newObj.prIndex === 1) console.log("++++", newObj)
+                console.log("++++", newObj.prIndex, newObj.mergedIndexes, newObj.filesCount, newObj.time)
+                stack.push(newObj)
                 steps++;
             }
         }
+
+
         if (steps === 0) {
             const newObj = Object.assign({}, item);
             newObj.mergedIndexes = newMergedPrIndexes
-                .sort((a, b) => pullRequests[a].created - pullRequests[b].created);
+                //.sort((a, b) => pullRequests[a].created - pullRequests[b].created);
             newObj.filesCount = newFilesCount;
+            newObj.time = newTimeCount;
 
             //console.log("Finish", item.filesCount)
 
             //result.push(newObj)
 
             if (totalResult) {
-                if (newObj.filesCount === totalResult.filesCount) {
 
-                    if (newObj.mergedIndexes.length === totalResult.mergedIndexes.length) {
-
-                        for (let i = 0; i < newObj.mergedIndexes.length; i++) {
-                            if (pullRequests[newObj.mergedIndexes[i]].created < pullRequests[totalResult.mergedIndexes[i]].created) {
-                                totalResult = newObj;
-                                break;
-                            }
-                        }
-
-                    } else if (newObj.mergedIndexes.length > totalResult.mergedIndexes.length) {
-                        totalResult = newObj;
-                    }
-
-                } else if (totalResult.filesCount - newObj.filesCount < 0) {
+                if (totalResult.filesCount - newObj.filesCount < 0) {
+                    totalResult = newObj;
+                } else if (newObj.filesCount === totalResult.filesCount && newObj.time < totalResult.time) {
+                    //console.log(newObj.time > totalResult.time)
                     totalResult = newObj;
                 }
+
             } else {
                 totalResult = newObj;
             }
@@ -180,7 +195,13 @@ module.exports = function (pullRequests) {
 
     }
 
+    const superRes = totalResult.mergedIndexes
+        .sort((a,b) => pullRequests[a].created - pullRequests[b].created)
+        .map(item => pullRequests[item].id)
 
-    return totalResult.mergedIndexes.map(index => pullRequests[index].id);
+
+    //return totalResult.mergedIndexes.map(index => pullRequests[index].id);
+
+    return superRes
 
 }
