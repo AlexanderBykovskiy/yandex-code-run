@@ -168,6 +168,7 @@ module.exports = function (pullRequests) {
 
 
         if (steps === 0) {
+            console.log("finish")
             const newObj = Object.assign({}, item);
             newObj.mergedIndexes = newMergedPrIndexes
                 //.sort((a, b) => pullRequests[a].created - pullRequests[b].created);
