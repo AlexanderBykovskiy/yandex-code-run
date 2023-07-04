@@ -136,7 +136,7 @@
     `
     }
     function buildTagHtml(id, title) {
-        return `<div class="Tag" data-tag-id="${id}">${title}</div>`
+        return `<div class="Tag" draggable="true" data-tag-id="${id}">${title}</div>`
     }
     document.body.innerHTML = buildHtml(data);
     window.onSolutionReady && window.onSolutionReady();
@@ -149,22 +149,26 @@
         e.preventDefault();
         e.stopPropagation();
 
-        const element = e.target?.closest('.Tag');
 
-        if (!dragElement) {
-            dragElement = element;
+        if (e.target instanceof Element) {
+
+            const element = e.target.closest('.Tag');
+
+            if (!dragElement) {
+                dragElement = element;
+            }
+
+
+            element?.classList?.add('Tag_dragged');
+
+            if (element?.parentElement?.classList?.contains('Letter')) {
+
+                //element.classList.add('Tag_removed')
+
+                tagZone?.classList?.add('Tags_dropzone');
+            }
+            letZone?.classList?.add('Letters_dropzone');
         }
-
-
-        element?.classList?.add('Tag_dragged');
-
-        if (element?.parentElement?.classList?.contains('Letter')) {
-
-            //element.classList.add('Tag_removed')
-
-            tagZone?.classList?.add('Tags_dropzone');
-        }
-        letZone?.classList?.add('Letters_dropzone');
 
     }
 
@@ -173,10 +177,14 @@
 
         e.preventDefault();
 
-        e.target?.closest('.Tag')?.classList?.remove('Tag_dragged', /*'Tag_removed'*/);
-        Array.from(document.querySelectorAll('.Letter')).forEach(item => item?.classList?.remove('Letter_dragovered'));
-        tagZone?.classList?.remove('Tags_dragovered', 'Tags_dropzone');
-        letZone?.classList?.remove('Letters_dropzone');
+        if (e.target instanceof Element) {
+            e.target?.closest('.Tag')?.classList?.remove('Tag_dragged', /*'Tag_removed'*/);
+            Array.from(document.querySelectorAll('.Letter')).forEach(item => item?.classList?.remove('Letter_dragovered'));
+            tagZone?.classList?.remove('Tags_dragovered', 'Tags_dropzone');
+            letZone?.classList?.remove('Letters_dropzone');
+
+            dragElement = undefined;
+        }
 
         dragElement = undefined;
     }
@@ -217,7 +225,7 @@
 
         e.preventDefault();
 
-        if (!(Array.from(e.target?.closest('.Letter')?.querySelectorAll(".Tag")).map(item => item?.innerHTML)).includes(dragElement?.innerHTML)) {
+        if (dragElement && !(Array.from(e.target?.closest('.Letter')?.querySelectorAll(".Tag")).map(item => item?.innerHTML)).includes(dragElement?.innerHTML)) {
 
 
             const newTag = dragElement?.cloneNode( true );
@@ -246,7 +254,7 @@
     function onLetterDragenter (e) {
         e.preventDefault();
         const list = e.target?.closest('.Letter');
-        if (!Array.from(list.querySelectorAll('.Tag')).map(item => item?.innerHTML).includes(dragElement?.innerHTML)) {
+        if (dragElement && !Array.from(list.querySelectorAll('.Tag')).map(item => item?.innerHTML).includes(dragElement?.innerHTML)) {
             list?.classList?.add('Letter_dragovered');
         }
     }
@@ -274,7 +282,7 @@
 
     // TAG
     for (const tag of tagList) {
-        tag.draggable = true;
+        //tag.draggable = true;
         tag.addEventListener('drag', onTagDrag);
         tag.addEventListener('dragend', onTagDragEnd);
     }
