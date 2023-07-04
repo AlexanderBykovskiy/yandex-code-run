@@ -149,20 +149,24 @@
     function onTagDrag (e) {
 
         e.preventDefault();
+        e.stopPropagation();
+
+        const element = e.target.closest('.Tag');
 
         if (!dragElement) {
-            dragElement = e.target;
+            dragElement = element;
         }
 
-        if (!tagZoneSourse) {
-            if (e.target.parentElement.classList.contains('Tags')) {
-                tagZoneSourse = "Tags";
-            }
-        }
+        // if (!tagZoneSourse) {
+        //     if (e.target.parentElement.classList.contains('Tags')) {
+        //         tagZoneSourse = "Tags";
+        //     }
+        // }
 
-        e.target.classList.add('Tag_dragged');
+        element.classList.add('Tag_dragged');
 
-        if (!tagZoneSourse) {
+        if (element.parentElement?.classList?.contains('Letter')) {
+
             tagZone.classList.add('Tags_dropzone');
         }
         letZone.classList.add('Letters_dropzone');
@@ -174,31 +178,29 @@
 
         e.preventDefault();
 
-        e.target.classList.remove('Tag_dragged');
+        e.target.closest('.Tag')?.classList?.remove('Tag_dragged');
         Array.from(document.querySelectorAll('.Letter')).forEach(item => item.classList.remove('Letter_dragovered'));
         tagZone.classList.remove('Tags_dragovered', 'Tags_dropzone');
         letZone.classList.remove('Letters_dropzone');
 
         dragElement = undefined;
-        tagZoneSourse = undefined;
-
     }
 
 
     function onTagZoneDrop (e) {
 
         e.preventDefault();
-
-        if (!tagZoneSourse)
+        if (dragElement?.parentElement?.classList?.contains('Letter')) {
             dragElement.remove();
+        }
+
 
     }
 
 
     function onTagDragenter (e) {
         e.preventDefault();
-        const list = e.target.closest('.Letter');
-        if (!tagZoneSourse) {
+        if (dragElement?.parentElement?.classList?.contains('Letter')) {
             tagZone.classList.add('Tags_dragovered');
         }
     }
@@ -222,7 +224,7 @@
 
         if (!(Array.from(e.target.closest('.Letter').querySelectorAll(".Tag")).map(item => item.innerHTML)).includes(dragElement.innerHTML)) {
 
-            const newTag = !!tagZoneSourse ? dragElement.cloneNode( true ) : dragElement;
+            const newTag = dragElement?.parentElement?.classList?.contains('Tags') ? dragElement.cloneNode( true ) : dragElement;
 
             newTag.addEventListener('drag', onTagDrag);
             newTag.addEventListener('dragend', onTagDragEnd);
@@ -241,14 +243,14 @@
     function onLetterDragenter (e) {
         e.preventDefault();
         const list = e.target.closest('.Letter');
-        if (!Array.from(list.querySelectorAll('.Tag')).map(item => item.innerHTML).includes(dragElement.innerHTML)) {
+        if (!Array.from(list.querySelectorAll('.Tag')).map(item => item.innerHTML).includes(dragElement?.innerHTML)) {
             list.classList.add('Letter_dragovered');
         }
     }
 
     function onLetterDragleave (e) {
         e.preventDefault();
-        e.target.closest('.Letter').classList.remove('Letter_dragovered');
+        e.target.closest('.Letter')?.classList.remove('Letter_dragovered');
     }
 
 
@@ -265,7 +267,7 @@
 
 
     let dragElement = undefined;
-    let tagZoneSourse = undefined;
+    //let tagZoneSourse = undefined;
 
 
     // TAG
