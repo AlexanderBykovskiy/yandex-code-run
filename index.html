@@ -157,15 +157,12 @@
             dragElement = element;
         }
 
-        // if (!tagZoneSourse) {
-        //     if (e.target.parentElement.classList.contains('Tags')) {
-        //         tagZoneSourse = "Tags";
-        //     }
-        // }
 
         element.classList.add('Tag_dragged');
 
         if (element.parentElement?.classList?.contains('Letter')) {
+
+            //element.classList.add('Tag_removed')
 
             tagZone.classList.add('Tags_dropzone');
         }
@@ -178,7 +175,7 @@
 
         e.preventDefault();
 
-        e.target.closest('.Tag')?.classList?.remove('Tag_dragged');
+        e.target.closest('.Tag')?.classList?.remove('Tag_dragged', /*'Tag_removed'*/);
         Array.from(document.querySelectorAll('.Letter')).forEach(item => item.classList.remove('Letter_dragovered'));
         tagZone.classList.remove('Tags_dragovered', 'Tags_dropzone');
         letZone.classList.remove('Letters_dropzone');
@@ -224,14 +221,20 @@
 
         if (!(Array.from(e.target.closest('.Letter').querySelectorAll(".Tag")).map(item => item.innerHTML)).includes(dragElement.innerHTML)) {
 
-            const newTag = dragElement?.parentElement?.classList?.contains('Tags') ? dragElement.cloneNode( true ) : dragElement;
+
+            const newTag = dragElement.cloneNode( true );
 
             newTag.addEventListener('drag', onTagDrag);
             newTag.addEventListener('dragend', onTagDragEnd);
 
-            e.target.closest('.Letter').append(newTag);
+            e.target.closest('.Letter').appendChild(newTag);
 
-            Array.from(document.querySelectorAll('.Tag')).forEach(item => item.classList.remove('Tag_dragged'));
+            if (dragElement?.parentElement?.classList?.contains('Letter')) {
+                dragElement.remove();
+            }
+            //const newTag = dragElement?.parentElement?.classList?.contains('Tags') ? dragElement.cloneNode( true ) : dragElement;
+
+            Array.from(document.querySelectorAll('.Tag')).forEach(item => item.classList.remove('Tag_dragged', /*'Tag_removed'*/));
             Array.from(document.querySelectorAll('.Letter')).forEach(item => item.classList.remove('Letter_dragovered'));
             tagZone.classList.remove('Tags_dragovered', 'Tags_dropzone');
             letZone.classList.remove('Letters_dropzone');
@@ -267,7 +270,6 @@
 
 
     let dragElement = undefined;
-    //let tagZoneSourse = undefined;
 
 
     // TAG
