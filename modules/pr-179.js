@@ -141,7 +141,7 @@ module.exports = function (pullRequests) {
         mergedIndexes: Array.from(notConflictIndexes),
         filesCount: filesCount(notConflictIndexes),
         files: getFiles(notConflictIndexes),
-        confFilesCount: 0,
+        confFilesCount: uniqFilesCount,
         time: itemCount(notConflictIndexes)
     }));
 
@@ -161,6 +161,7 @@ module.exports = function (pullRequests) {
         const newTimeCount = item.time + pullRequests[item.prIndex].created;
         //console.log(newTimeCount, pullRequests[item.prIndex].created, newTimeCount < pullRequests[item.prIndex].created)
 
+        if (totalResult && item.confFilesCount + item.confFilesCount < totalResult.filesCount) continue;
 
         let steps = 0;
         let conflictFilesCount = item.confFilesCount;
@@ -177,12 +178,12 @@ module.exports = function (pullRequests) {
                     mergedIndexes: Array.from(newMergedPrIndexes),
                     filesCount: item.filesCount + pullRequests[i].files.length,
                     files: newFiles,
-                    confFilesCount: conflictFilesCount,
+                    confFilesCount: conflictFilesCount - pullRequests[i].files.length,
                     time: item.time + pullRequests[i].created,
                 }
                 const sum = ""
                 //if(newObj.prIndex === 1) console.log("++++", newObj.prIndex, newObj.mergedIndexes, newObj.filesCount, newObj.time)
-                console.log("++++", newObj.prIndex, newObj.mergedIndexes, newObj.filesCount, newObj.files, newObj.time)
+                console.log("++++", newObj.prIndex, newObj.mergedIndexes, newObj.filesCount, newObj.confFilesCount, newObj.time)
                 stack.push(newObj)
 
                 steps++;
