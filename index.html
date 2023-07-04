@@ -136,166 +136,158 @@
     `
     }
     function buildTagHtml(id, title) {
-        return `<div class="Tag" data-tag-id="${id}">${title}</div>`
+        return `<div class="Tag"  data-tag-id="${id}">${title}</div>`
     }
     document.body.innerHTML = buildHtml(data);
-    window.onSolutionReady && window.onSolutionReady();
 
 
 
-    // TAG EVENTS
-    function onTagDrag (e) {
 
+    const tagZone = document.querySelector('.Tags');
+    const letterZone = document.querySelector('.Letters');
+    tagZone.style.userSelect = 'none';
+    letterZone.style.userSelect = 'none';
+    const tags = document.querySelectorAll('.Tag');
+    const letters = document.querySelectorAll('.Letter');
+
+    let currentTag = undefined;
+
+    function clearStyles() {
+
+        currentTag = undefined;
+
+        document.querySelectorAll('.Tag').forEach(item => item.classList.remove('Tag_dragged'));
+        letterZone.classList.remove('Letters_dropzone');
+        tagZone.classList.remove('Tags_dropzone', 'Tags_dragovered');
+    }
+
+    function onDragover (e) {
         e.preventDefault();
-        e.stopPropagation();
-
-        const element = e.target?.closest('.Tag');
-
-        if (!dragElement) {
-            dragElement = element;
-        }
-
-
-        element?.classList?.add('Tag_dragged');
-
-        if (element?.parentElement?.classList?.contains('Letter')) {
-
-            //element.classList.add('Tag_removed')
-
-            tagZone?.classList?.add('Tags_dropzone');
-        }
-        letZone?.classList?.add('Letters_dropzone');
-
     }
 
 
-    function onTagDragEnd (e) {
+    function tagEvents(tag) {
 
-        e.preventDefault();
+        // START
+        tag.addEventListener('dragstart', (e) => {
 
-        e.target?.closest('.Tag')?.classList?.remove('Tag_dragged', /*'Tag_removed'*/);
-        Array.from(document.querySelectorAll('.Letter')).forEach(item => item?.classList?.remove('Letter_dragovered'));
-        tagZone?.classList?.remove('Tags_dragovered', 'Tags_dropzone');
-        letZone?.classList?.remove('Letters_dropzone');
+            const element = e.target instanceof Element && e.target.closest('.Tag');
 
-        dragElement = undefined;
-    }
+            if (!currentTag && element) {
 
+                currentTag = element;
 
-    function onTagZoneDrop (e) {
+                currentTag.classList.add('Tag_dragged');
 
-        e.preventDefault();
-        if (dragElement?.parentElement?.classList?.contains('Letter')) {
-            dragElement?.remove();
-        }
+                letterZone.classList.add('Letters_dropzone');
 
-
-    }
-
-
-    function onTagDragenter (e) {
-        e.preventDefault();
-        if (dragElement?.parentElement?.classList?.contains('Letter')) {
-            tagZone?.classList?.add('Tags_dragovered');
-        }
-    }
-
-    function onTagDragleave (e) {
-        e.preventDefault();
-        tagZone?.classList?.remove('Tags_dragovered', 'Tags_dropzone');
-    }
-
-
-    // LETTER EVENTS
-    function onLetterDragover (e) {
-
-        e.preventDefault();
-
-    }
-
-    function onLetterDrop (e) {
-
-        e.preventDefault();
-
-        if (!(Array.from(e.target?.closest('.Letter')?.querySelectorAll(".Tag")).map(item => item?.innerHTML)).includes(dragElement?.innerHTML)) {
-
-
-            const newTag = dragElement?.cloneNode( true );
-            //newTag.draggable = true;
-            newTag?.addEventListener('drag', onTagDrag);
-            newTag?.addEventListener('dragend', onTagDragEnd);
-
-            e.target?.closest('.Letter')?.appendChild(newTag);
-
-            if (dragElement?.parentElement?.classList?.contains('Letter')) {
-                dragElement?.classList?.add('Tag_removed');
-                dragElement?.remove();
+                if(element.parentElement?.classList.contains('Letter')) {
+                    tagZone.classList.add('Tags_dropzone');
+                }
             }
 
-            //const newTag = dragElement?.parentElement?.classList?.contains('Tags') ? dragElement.cloneNode( true ) : dragElement;
+        });
 
-            Array.from(document.querySelectorAll('.Tag')).forEach(item => item?.classList?.remove('Tag_dragged', /*'Tag_removed'*/));
-            Array.from(document.querySelectorAll('.Letter')).forEach(item => item?.classList?.remove('Letter_dragovered'));
-            tagZone?.classList?.remove('Tags_dragovered', 'Tags_dropzone');
-            letZone?.classList?.remove('Letters_dropzone');
+        // END
+        tag.addEventListener('dragend', (e) => {
+            e.preventDefault();
 
-        }
+            clearStyles();
+        });
 
-    }
-
-    function onLetterDragenter (e) {
-        e.preventDefault();
-        const list = e.target?.closest('.Letter');
-        if (!Array.from(list.querySelectorAll('.Tag')).map(item => item?.innerHTML).includes(dragElement?.innerHTML)) {
-            list?.classList?.add('Letter_dragovered');
-        }
-    }
-
-    function onLetterDragleave (e) {
-        e.preventDefault();
-        e.target?.closest('.Letter')?.classList?.remove('Letter_dragovered');
+        // IN PROCESS
+        tag.addEventListener('drag', (e) => {
+            e.preventDefault();
+        });
     }
 
 
-    // TAG ZONE EVENTS
-    function onTagZoneDragover (e) {
-        e.preventDefault();
-    }
+    for (const tag of tags) {
 
-    const tagZone = document.querySelector('.Tags');
-    const letZone = document.querySelector('.Letters');
-
-    const tagList = document.querySelectorAll('.Tag');
-    const letterList = document.querySelectorAll('.Letter');
-
-
-    let dragElement = undefined;
-
-
-    // TAG
-    for (const tag of tagList) {
         tag.draggable = true;
-        tag.addEventListener('drag', onTagDrag);
-        tag.addEventListener('dragend', onTagDragEnd);
-    }
 
-    // LETTER
-    for (const letter of letterList) {
-        letter.addEventListener('dragover', onLetterDragover);
-        letter.addEventListener('drop', onLetterDrop);
-        letter.addEventListener('dragenter', onLetterDragenter);
-        letter.addEventListener('dragleave', onLetterDragleave);
+        tagEvents(tag);
+
     }
 
 
+    for (const letter of letters) {
 
-    // TAG ZONE
-    tagZone.addEventListener('dragover', onTagZoneDragover);
-    tagZone.addEventListener('drop', onTagZoneDrop);
-    tagZone.addEventListener('dragenter', onTagDragenter);
-    tagZone.addEventListener('dragleave', onTagDragleave);
+        // ENTER
+        letter.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+
+            if (currentTag && !Array.from(letter.querySelectorAll('.Tag')).map(item => item.innerText).includes(currentTag.innerText)) {
+                letter.classList.add('Letter_dragovered');
+            }
 
 
+        });
+
+        letter.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+
+            letter.classList.remove('Letter_dragovered');
+
+        });
+
+        letter.addEventListener('dragover', onDragover);
+
+        // DROP
+        letter.addEventListener('drop', (e) => {
+            e.preventDefault();
+
+            if (currentTag && !Array.from(letter.querySelectorAll('.Tag')).map(item => item.innerText).includes(currentTag.innerText)) {
+
+                const newTag = currentTag.cloneNode( true );
+                tagEvents(newTag)
+
+                letter.appendChild(newTag);
+
+                if (currentTag.parentElement.classList.contains('Letter')) {
+                    currentTag.remove();
+                }
+
+            }
+
+            clearStyles();
+            letter.classList.remove('Letter_dragovered');
+        });
+
+    }
+
+
+    tagZone.addEventListener('dragenter', (e) => {
+        e.preventDefault();
+
+        if (currentTag && currentTag.parentElement.classList.contains('Letter')) {
+            tagZone.classList.add('Tags_dragovered');
+        }
+
+
+    })
+
+    tagZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+
+        tagZone.classList.remove('Tags_dragovered');
+
+    })
+
+    tagZone.addEventListener('dragover', onDragover);
+
+    tagZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+
+        if (currentTag && currentTag.parentElement.classList.contains('Letter')) {
+            currentTag.remove();
+        }
+
+    })
+
+
+
+    window.onSolutionReady && window.onSolutionReady();
 
 
 </script>
