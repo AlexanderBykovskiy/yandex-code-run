@@ -149,22 +149,22 @@
         e.preventDefault();
         e.stopPropagation();
 
-        const element = e.target.closest('.Tag');
+        const element = e.target?.closest('.Tag');
 
         if (!dragElement) {
             dragElement = element;
         }
 
 
-        element.classList.add('Tag_dragged');
+        element?.classList?.add('Tag_dragged');
 
-        if (element.parentElement?.classList?.contains('Letter')) {
+        if (element?.parentElement?.classList?.contains('Letter')) {
 
             //element.classList.add('Tag_removed')
 
-            tagZone.classList.add('Tags_dropzone');
+            tagZone?.classList?.add('Tags_dropzone');
         }
-        letZone.classList.add('Letters_dropzone');
+        letZone?.classList?.add('Letters_dropzone');
 
     }
 
@@ -173,10 +173,10 @@
 
         e.preventDefault();
 
-        e.target.closest('.Tag')?.classList?.remove('Tag_dragged', /*'Tag_removed'*/);
-        Array.from(document.querySelectorAll('.Letter')).forEach(item => item.classList.remove('Letter_dragovered'));
-        tagZone.classList.remove('Tags_dragovered', 'Tags_dropzone');
-        letZone.classList.remove('Letters_dropzone');
+        e.target?.closest('.Tag')?.classList?.remove('Tag_dragged', /*'Tag_removed'*/);
+        Array.from(document.querySelectorAll('.Letter')).forEach(item => item?.classList?.remove('Letter_dragovered'));
+        tagZone?.classList?.remove('Tags_dragovered', 'Tags_dropzone');
+        letZone?.classList?.remove('Letters_dropzone');
 
         dragElement = undefined;
     }
@@ -186,7 +186,7 @@
 
         e.preventDefault();
         if (dragElement?.parentElement?.classList?.contains('Letter')) {
-            dragElement.remove();
+            dragElement?.remove();
         }
 
 
@@ -196,13 +196,13 @@
     function onTagDragenter (e) {
         e.preventDefault();
         if (dragElement?.parentElement?.classList?.contains('Letter')) {
-            tagZone.classList.add('Tags_dragovered');
+            tagZone?.classList?.add('Tags_dragovered');
         }
     }
 
     function onTagDragleave (e) {
         e.preventDefault();
-        tagZone.classList.remove('Tags_dragovered', 'Tags_dropzone');
+        tagZone?.classList?.remove('Tags_dragovered', 'Tags_dropzone');
     }
 
 
@@ -217,27 +217,27 @@
 
         e.preventDefault();
 
-        if (!(Array.from(e.target.closest('.Letter').querySelectorAll(".Tag")).map(item => item.innerHTML)).includes(dragElement.innerHTML)) {
+        if (!(Array.from(e.target?.closest('.Letter')?.querySelectorAll(".Tag")).map(item => item?.innerHTML)).includes(dragElement?.innerHTML)) {
 
 
-            const newTag = dragElement.cloneNode( true );
-            newTag.draggable = true;
-            newTag.addEventListener('drag', onTagDrag);
-            newTag.addEventListener('dragend', onTagDragEnd);
+            const newTag = dragElement?.cloneNode( true );
+            //newTag.draggable = true;
+            newTag?.addEventListener('drag', onTagDrag);
+            newTag?.addEventListener('dragend', onTagDragEnd);
 
-            e.target.closest('.Letter').appendChild(newTag);
+            e.target?.closest('.Letter')?.appendChild(newTag);
 
             if (dragElement?.parentElement?.classList?.contains('Letter')) {
-                dragElement.classList.add('Tag_removed');
-                dragElement.remove();
+                dragElement?.classList?.add('Tag_removed');
+                dragElement?.remove();
             }
 
             //const newTag = dragElement?.parentElement?.classList?.contains('Tags') ? dragElement.cloneNode( true ) : dragElement;
 
-            Array.from(document.querySelectorAll('.Tag')).forEach(item => item.classList.remove('Tag_dragged', /*'Tag_removed'*/));
-            Array.from(document.querySelectorAll('.Letter')).forEach(item => item.classList.remove('Letter_dragovered'));
-            tagZone.classList.remove('Tags_dragovered', 'Tags_dropzone');
-            letZone.classList.remove('Letters_dropzone');
+            Array.from(document.querySelectorAll('.Tag')).forEach(item => item?.classList?.remove('Tag_dragged', /*'Tag_removed'*/));
+            Array.from(document.querySelectorAll('.Letter')).forEach(item => item?.classList?.remove('Letter_dragovered'));
+            tagZone?.classList?.remove('Tags_dragovered', 'Tags_dropzone');
+            letZone?.classList?.remove('Letters_dropzone');
 
         }
 
@@ -245,15 +245,15 @@
 
     function onLetterDragenter (e) {
         e.preventDefault();
-        const list = e.target.closest('.Letter');
-        if (!Array.from(list.querySelectorAll('.Tag')).map(item => item.innerHTML).includes(dragElement?.innerHTML)) {
-            list.classList.add('Letter_dragovered');
+        const list = e.target?.closest('.Letter');
+        if (!Array.from(list.querySelectorAll('.Tag')).map(item => item?.innerHTML).includes(dragElement?.innerHTML)) {
+            list?.classList?.add('Letter_dragovered');
         }
     }
 
     function onLetterDragleave (e) {
         e.preventDefault();
-        e.target.closest('.Letter')?.classList.remove('Letter_dragovered');
+        e.target?.closest('.Letter')?.classList?.remove('Letter_dragovered');
     }
 
 
