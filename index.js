@@ -1,7 +1,35 @@
 const {getLastCompatibleDependencies} = require('./modules/pr-208');
 
 
-const test1 = {"data":{"react":{"versions":[{"version":18},{"version":17},{"version":16}]},"router":{"versions":[{"version":21,"dependencies":[{"packageName":"react","version":18}]},{"version":20,"dependencies":[{"packageName":"react","version":18}]},{"version":19,"dependencies":[{"packageName":"react","version":17}]},{"version":18,"dependencies":[{"packageName":"react","version":17}]},{"version":17,"dependencies":[{"packageName":"react","version":16}]}]},"uikit":{"versions":[{"version":9,"dependencies":[{"packageName":"router","version":20},{"packageName":"react","version":17}]},{"version":8,"dependencies":[{"packageName":"router","version":19},{"packageName":"react","version":17}]},{"version":7,"dependencies":[{"packageName":"router","version":18},{"packageName":"react","version":17}]}]}},"packageA":"router","packageB":"uikit"}
+const test1 = {
+    "data": {
+        "react": {"versions": [{"version": 18}, {"version": 17}, {"version": 16}]},
+        "router": {
+            "versions": [{
+                "version": 21,
+                "dependencies": [{"packageName": "react", "version": 18}]
+            }, {"version": 20, "dependencies": [{"packageName": "react", "version": 18}]}, {
+                "version": 19,
+                "dependencies": [{"packageName": "react", "version": 17}]
+            }, {"version": 18, "dependencies": [{"packageName": "react", "version": 17}]}, {
+                "version": 17,
+                "dependencies": [{"packageName": "react", "version": 16}]
+            }]
+        },
+        "uikit": {
+            "versions": [{
+                "version": 9,
+                "dependencies": [{"packageName": "router", "version": 20}, {"packageName": "react", "version": 17}]
+            }, {
+                "version": 8,
+                "dependencies": [{"packageName": "router", "version": 19}, {"packageName": "react", "version": 17}]
+            }, {
+                "version": 7,
+                "dependencies": [{"packageName": "router", "version": 18}, {"packageName": "react", "version": 17}]
+            }]
+        }
+    }, "packageA": "router", "packageB": "uikit"
+}
 console.log("res", getLastCompatibleDependencies(test1.data, test1.packageA, test1.packageB));
 console.log({"router":19,"uikit":8});
 
@@ -128,7 +156,7 @@ const test2 = {"data":{
                         "dependencies":[
                             {
                                 "packageName":"css-helper",
-                                "version":36
+                                "version":45
                             }]
                     },
                     {
@@ -180,5 +208,5 @@ const test2 = {"data":{
                     }]
             }},
     "packageA":"lite-components","packageB":"lite-design"}
-console.log("res", getLastCompatibleDependencies(test2.data, test2.packageA, test2.packageB));
-console.log({"lite-components":14,"lite-design":2});
+//console.log("res", getLastCompatibleDependencies(test2.data, test2.packageA, test2.packageB));
+//console.log({"lite-components":14,"lite-design":2});

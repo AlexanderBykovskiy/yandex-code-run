@@ -1,22 +1,25 @@
 function getLastCompatibleDependencies(data, packageA, packageB) {
 
-    //console.log(packageA, packageB)
+    console.log(packageA, packageB)
     //console.log()
 
-    let resAv = 0;
-    let resBv = 0;
 
     const libAversions = data[packageA].versions.map(item => item.version);
     const libBversions = data[packageB].versions.map(item => item.version);
-    //console.log(libAversions)
-    //console.log(libBversions)
+    console.log(libAversions)
+    console.log(libBversions)
 
 
 
     const parcer = (lib, ver, list, data) => {
 
         const curVer = data[lib].versions.find(item => item.version === ver);
-        //console.log('+',lib, curVer)
+
+        if (!curVer) return list;
+
+        //console.log()
+        //console.log('####',lib, curVer)
+        //console.log()
 
         const newLibObj = {
             name: lib,
@@ -24,25 +27,29 @@ function getLastCompatibleDependencies(data, packageA, packageB) {
         }
 
         let newList = Array.from(list);
-        newList.push(newLibObj)
+
 
         if (curVer.dependencies && curVer.dependencies.length) {
             curVer.dependencies.forEach(item => {
-                newList = parcer(item.packageName, item.version, newList, data)
+                newList = parcer(item.packageName, item.version, Array.from(newList), data)
             })
         }
+
+        newList.push(newLibObj)
 
         return newList
     }
 
     function whichNextDown(arr1, arr2) {
 
+
         const newA = [];
         const newB = [];
 
         arr1.forEach(itemA => {
-            //console.log(itemA)
+            //console.log("++++++", itemA)
             const conflict = arr2.find(itemB => itemA.name === itemB.name && itemA.ver !== itemB.ver);
+            //console.log("++++++", conflict)
             if (conflict) {
                 newA.push(itemA);
                 newB.push(conflict);
@@ -68,6 +75,7 @@ function getLastCompatibleDependencies(data, packageA, packageB) {
     // console.log('parser2', var2)
     //
     // console.log(whichNextDown(var1, var2))
+/*
 
     const result = {};
 
@@ -80,6 +88,9 @@ function getLastCompatibleDependencies(data, packageA, packageB) {
 
         const depA = parcer(packageA, verA, [], data)
         const depB = parcer(packageB, verB, [], data)
+
+        //console.log("+",depA)
+        //console.log("-",depB)
 
         const conflicts = whichNextDown(depA, depB);
 
@@ -107,8 +118,9 @@ function getLastCompatibleDependencies(data, packageA, packageB) {
         }
 
     }
+*/
 
-    return result;
+    //return result;
 
 }
 
