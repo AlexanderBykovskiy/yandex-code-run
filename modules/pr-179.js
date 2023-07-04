@@ -130,16 +130,22 @@ module.exports = function (pullRequests) {
         arrIndexes.forEach(item => sum += pullRequests[item].created)
         return sum;
     }
+    const getFiles = (arrIndexes) => {
+        const files = new Set();
+        arrIndexes.forEach(item => pullRequests[item].files.forEach(file => files.add(file)));
+        return files;
+    }
 
     const stack = conflictIndexes.map(item => ({
         prIndex: item,
         mergedIndexes: Array.from(notConflictIndexes),
         filesCount: filesCount(notConflictIndexes),
+        files: getFiles(notConflictIndexes),
         confFilesCount: 0,
         time: itemCount(notConflictIndexes)
     }));
 
-    //console.log(stack)
+    console.log(stack)
 
     while (stack.length) {
 
@@ -164,16 +170,19 @@ module.exports = function (pullRequests) {
         for (let i = 0; i < pullRequests.length; i++) {
             if (!newMergedPrIndexes.includes(i) && !doPRsConflict(pullRequests[i], pullRequests[item.prIndex])) {
                 //console.log("+++",item.filesCount)
+                const newFiles = item.files;
+                pullRequests[i].files.forEach(f => newFiles.add(f));
                 const newObj = {
                     prIndex: i,
                     mergedIndexes: Array.from(newMergedPrIndexes),
                     filesCount: item.filesCount + pullRequests[i].files.length,
+                    files: newFiles,
                     confFilesCount: conflictFilesCount,
                     time: item.time + pullRequests[i].created,
                 }
                 const sum = ""
                 //if(newObj.prIndex === 1) console.log("++++", newObj.prIndex, newObj.mergedIndexes, newObj.filesCount, newObj.time)
-                console.log("++++", newObj.prIndex, newObj.mergedIndexes, newObj.filesCount, newObj.confFilesCount, newObj.time)
+                console.log("++++", newObj.prIndex, newObj.mergedIndexes, newObj.filesCount, newObj.files, newObj.time)
                 stack.push(newObj)
 
                 steps++;
