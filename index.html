@@ -33,10 +33,13 @@
 
         function calcFontVariationSettings (container, str, min, max) {
 
-            if (str.length === 0 || str.length > 100) return null;
-
-            if (max > 1000) return null; //max = 1000;
-            if (min < 0) return null; //min = 0;
+            // if (!container) return null;
+            //
+            // if (typeof str !== "string" || str.length === 0 || str.length > 100) return null;
+            //
+            // if (typeof max !== "number" || typeof min !== "number") return null;
+            // if (max > 1000) max = 1000;
+            // if (min < 0) min = 0;
 
             const span = document.createElement("span");
             span.innerText = str;
@@ -47,28 +50,75 @@
 
             let goodWidth = null;
 
-            for (let size = max; size >= min; size--) {
+            /*for (let size = max; size >= min; size--) {
 
                 span.style.setProperty('font-variation-settings', `"wdth" ${size}`, 'important');
 
                 const spanSize = span.getBoundingClientRect();
 
-                //console.log(containerSize.width, spanSize.width)
-                //console.log(containerSize.height, spanSize.height )
-
                 if (containerSize.width >= spanSize.width && spanSize.height <= containerSize.height ) {
                     goodWidth = size;
-                    //span.remove();
+                    span.remove();
                     break;
+                }
+            }*/
+
+            let nMax = max;
+            let nMin = min;
+
+            // while (nMax > nMin) {
+            //
+            //     if (nMax - nMin === 1) break;
+            //
+            //     const size = Math.floor((nMax + nMin)/2);
+            //     console.log(size, nMax, nMin)
+            //
+            //     span.style.setProperty('font-variation-settings', `"wdth" ${size}`, 'important');
+            //
+            //     const spanSize = span.getBoundingClientRect();
+            //
+            //
+            //
+            //     // if (containerSize.width >= spanSize.width && spanSize.height <= containerSize.height ) {
+            //     //     nMax = size;
+            //     // } else {
+            //     //     nMin = size;
+            //     // }
+            //
+            // }
+
+
+            //let lastGood;
+            while (nMax - nMin > 1) {
+
+                let size = Math.floor((nMin + nMax) / 2);
+
+                //console.log('size',size, 'min', nMin, 'max', nMax);
+
+                span.style.setProperty('font-variation-settings', `"wdth" ${size}`, 'important');
+                const spanSize = span.getBoundingClientRect();
+
+                const good = containerSize.width >= spanSize.width && spanSize.height <= containerSize.height;
+
+                // console.log(goodW)
+                // console.log(goodH)
+
+                if (good) {
+                    //console.log('good')
+                    nMin = size;
+                    goodWidth = size;
+                } else {
+                    //console.log('bad')
+                    nMax = size;
                 }
 
             }
-
+            //console.log("++++", goodWidth)
             return goodWidth;
         }
 
         const container = document.getElementById("container");
-        const text = "DEMO Class font rirr";
+        const text = "DEMO Class font rir";
         //const text = "DEMO";
         const min = 0;
         const max = 150;
