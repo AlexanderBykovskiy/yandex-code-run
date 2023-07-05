@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>321 responsive font</title>
+</head>
+
+<style>
+    @font-face {
+        font-family: Gingham;
+        src: url(https://yoksel.github.io/variable-fonts/assets/fonts/Gingham/Gingham.ttf) format("truetype");
+    }
+    body {
+        background-color: aquamarine;
+    }
+</style>
+
+<body>
+
+    <div id="container" style="font-size: 27px; width: 75px; height: 100px; background-color: white"></div>
+
+    <script>
+        /***
+         * @param container {Node} ссылка на DOM-node, в которую нужно вписать строку `str`
+         * @param str {string} строка, которую необходимо вписать. Максимальная длина равняется 100 символам
+         * @param min {number} минимальное значение `font-variation-settings` (целое число)
+         * @param max {number} максимальное значение `font-variation-settings` (целое число)
+         * @return {number | null} искомое значение `font-variation-settings` (целое число) или null, если текст вписать нельзя
+         */
+
+        function calcFontVariationSettings (container, str, min, max) {
+
+            if (str.length === 0 || str.length > 100) return null;
+
+            if (max > 1000) max = 1000;
+            if (min < 0) min = 0;
+
+            const span = document.createElement("span");
+
+            span.innerText = str;
+
+            span.style.fontFamily = "Gingham";
+
+            container.appendChild(span);
+            const containerSize = container.getBoundingClientRect();
+
+            let goodWidth = null;
+
+            for (let size = max; size >= min; size--) {
+
+                //span.style.fontVariationSettings = `"wdth" ${size}`;
+                span.style.setProperty('font-variation-settings', `"wdth" ${size}`, 'important');
+
+                const spanSize = span.getBoundingClientRect();
+
+                //console.log(containerSize.width, spanSize.width)
+                //console.log(containerSize.height, spanSize.height )
+
+                if (containerSize.width >= spanSize.width && spanSize.height <= containerSize.height ) {
+                    goodWidth = size;
+                    span.remove();
+                    break;
+                }
+
+            }
+
+            return goodWidth;
+
+        }
+
+        const container = document.getElementById("container");
+        const text = "DEMO Class font rrrr";
+        //const text = "DEMO";
+        const min = 0;
+        const max = 150;
+
+        const fontWidth = calcFontVariationSettings(container, text, min, max);
+
+        console.log(fontWidth);
+
+    </script>
+
+</body>
+</html>
