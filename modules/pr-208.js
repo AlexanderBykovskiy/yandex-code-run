@@ -1,13 +1,13 @@
 function getLastCompatibleDependencies(data, packageA, packageB) {
 
-    console.log(packageA, packageB)
+    //console.log(packageA, packageB)
     //console.log()
 
 
     const libAversions = data[packageA].versions.map(item => item.version);
     const libBversions = data[packageB].versions.map(item => item.version);
-    console.log(libAversions)
-    console.log(libBversions)
+    //console.log(libAversions)
+    //console.log(libBversions)
 
 
 
@@ -15,7 +15,7 @@ function getLastCompatibleDependencies(data, packageA, packageB) {
 
         const curVer = data[lib].versions.find(item => item.version === ver);
 
-        if (!curVer) return list;
+        if (!curVer) return null;
 
         //console.log()
         //console.log('####',lib, curVer)
@@ -35,12 +35,17 @@ function getLastCompatibleDependencies(data, packageA, packageB) {
             })
         }
 
+        if (newList === null) return null;
+
         newList.push(newLibObj)
 
         return newList
     }
 
-    function whichNextDown(arr1, arr2) {
+
+    // More fast way
+
+    /*function whichNextDown(arr1, arr2) {
 
 
         const newA = [];
@@ -66,7 +71,7 @@ function getLastCompatibleDependencies(data, packageA, packageB) {
         }
 
         return res;
-    }
+    }*/
 
 
     // const var1 = parcer(packageA, 17, [], data);
@@ -121,6 +126,61 @@ function getLastCompatibleDependencies(data, packageA, packageB) {
 */
 
     //return result;
+
+    const results = [];
+
+    libAversions.forEach(verA => {
+        libBversions.forEach(verB => {
+
+            const libsOfA = parcer(packageA, verA, [], data);
+            const libsObB = parcer(packageB, verB, [], data);
+
+            if (libsOfA === null || libsObB === null) return;
+
+            const fullDepsList = [...libsOfA, ...libsObB];
+
+            let badVariant = false;
+            loop: {
+                for (let i = 0; i < fullDepsList.length - 1; i++) {
+                    for (let j = i + 1; j < fullDepsList.length; j++) {
+                        if (fullDepsList[i].name === fullDepsList[j].name && fullDepsList[i].ver !== fullDepsList[j].ver) {
+                            badVariant = true;
+                            break loop;
+                        }
+                    }
+                }
+            }
+
+            if (!badVariant) {
+                //console.log(badVariant, fullDepsList)
+                const res = {};
+                for (const item of fullDepsList) {
+                    if (!res[packageA] && item.name === packageA) {
+                        res[packageA] = item.ver;
+                    }
+                    if (!res[packageB] && item.name === packageB) {
+                        res[packageB] = item.ver;
+                    }
+                    if (res[packageA] !== undefined && res[packageB] !== undefined) {
+                        //console.log(res)
+                        results.push(res);
+                        break;
+                    }
+                }
+            }
+
+        })
+    })
+
+    let answer = results[0];
+
+    results.forEach(item => {
+        if (item[packageA] > answer[packageA] || item[packageB] > answer[packageB]) {
+            answer = item;
+        }
+    })
+
+    return answer;
 
 }
 
