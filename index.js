@@ -23,11 +23,7 @@ const test1 = [
     }
 ]
 
-console.log(robot(test1), [
-    "#1",
-    "#2",
-    "#4"
-]);
+console.log(robot(test1), [ "#1", "#2", "#4"]);
 
 const test2 = [
     {
@@ -43,7 +39,7 @@ const test2 = [
     {
         "id": "#3",
         "created": 1538199200,
-        "files": [ "b", "g" ]
+        "files": [ "b", "g", "t" ]
     },
     {
         "id": "#4",

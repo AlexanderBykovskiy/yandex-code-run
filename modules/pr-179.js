@@ -25,12 +25,7 @@ module.exports = function (pullRequests) {
         }
     }
 
-    const filesList = pullRequests.reduce((arr, item) => [...arr, ...item.files], []);
-    console.log(filesList)
 
-    const setFiles = new Set(filesList);
-    console.log(setFiles, setFiles.size)
-    const uniqFilesCount = setFiles.size;
 
 
     const rowConflictMatrix = [];
@@ -38,13 +33,8 @@ module.exports = function (pullRequests) {
         rowConflictMatrix.push(conflictMatrix.slice(i*pullRequests.length, i*pullRequests.length + pullRequests.length))
     }
 
-    console.log(rowConflictMatrix)
-    console.log()
 
 
-    // const getPRIndex = (pr) => {
-    //     pullRequests.findIndex(item => item === pr)
-    // }
 
     const getNonConflictingPRsIndexes = () => {
         const nCPRIndexes = [];
@@ -57,11 +47,8 @@ module.exports = function (pullRequests) {
         return nCPRIndexes;
     }
 
-    const notConflictIndexes = getNonConflictingPRsIndexes();
 
-    //console.log("not conflict", notConflictIndexes, notConflictIndexes.map(item => pullRequests[item].id))
-
-    const getConflictingPRsIndexes = () => {
+    const getConflictingPRsIndexes = (arr) => {
         const notConf = getNonConflictingPRsIndexes();
         const confIndexes = [];
         for (let i = 0; i < pullRequests.length; i++) {
@@ -72,18 +59,6 @@ module.exports = function (pullRequests) {
         return confIndexes;
     }
 
-    const conflictIndexes = getConflictingPRsIndexes();
-
-    //console.log("conflict", conflictIndexes, conflictIndexes.map(item => pullRequests[item].id))
-    //console.log()
-
-
-
-    function doPRsConflict(pr1, pr2) {
-        const i = prToIndex.get(pr1);
-        const j = prToIndex.get(pr2);
-        return conflictMatrix[i * pullRequests.length + j] === 1;
-    }
 
 
     function conflicts(a, b) {
@@ -104,131 +79,98 @@ module.exports = function (pullRequests) {
     }
 
 
-
-
-    if (!pullRequests.length) return [];
+    if (pullRequests.length === 0) return [];
 
     if (pullRequests.length === 1) return [pullRequests[0].id];
 
 
-    //const result = [];
+    const ncPullRequests = getNonConflictingPRsIndexes().map(index => pullRequests[index]);
+    //console.log("no conflict\n",ncPullRequests)
 
+    const cPullRequests = Array.from(getConflictingPRsIndexes()).map(index => pullRequests[index]);
+    //console.log("conflict\n",cPullRequests)
 
-    let totalResult = undefined;
+    const notIncludedFilesCount = cPullRequests.reduce((sum, item) => sum + item.files.length, 0);
+    //console.log("files to merge", notIncludedFilesCount)
 
+    const stack = cPullRequests
+        .map((item, index) => ({
+            index: index,
+            mergedPR: [],
+            files: new Set(),
+            mergedFilesCount: 0,
+            needToMergeFilesCount: notIncludedFilesCount,
+        }))
+        .sort((a,b) => b.created - a.created);
 
-    const filesCount = (arrIndexes) => {
-        //console.log("++++++", arrIndexes)
-        let count = 0;
-        arrIndexes.forEach(item => count += pullRequests[item].files.length)
-        //console.log('---------count', count)
-        return count
+    const result = {
+        prList: [],
+        filesCount: 0,
+        created: null,
     }
 
-    const itemCount = (arrIndexes) => {
-        let sum = 0;
-        arrIndexes.forEach(item => sum += pullRequests[item].created)
-        return sum;
-    }
-    const getFiles = (arrIndexes) => {
-        const files = new Set();
-        arrIndexes.forEach(item => pullRequests[item].files.forEach(file => files.add(file)));
-        return files;
+    const sumTime = (arr) => {
+        return arr.reduce((sum, item) => sum + item.created, 0);
     }
 
-    const stack = conflictIndexes.map(item => ({
-        prIndex: item,
-        mergedIndexes: Array.from(notConflictIndexes),
-        filesCount: filesCount(notConflictIndexes),
-        files: getFiles(notConflictIndexes),
-        confFilesCount: uniqFilesCount,
-        time: itemCount(notConflictIndexes)
-    }));
+    //console.log('stack',stack)
 
-    console.log(stack)
+    loop:while (stack.length) {
+        const curStep = stack.pop();
+        const curPR = cPullRequests[curStep.index];
 
-    while (stack.length) {
+        //console.log("step", curStep)
 
-        const item = stack.pop();
+        if (curStep.index === cPullRequests.length) {
+            //console.log("step", curStep)
+            const time = sumTime(curStep.mergedPR);
+            if (curStep.files.size > result.filesCount || (curStep.files.size === result.filesCount && result.created !== null && time < result.created)) {
+                //console.log("+", curStep)
+                //console.log("-",curPR)
+                result.filesCount = curStep.files.size;
+                result.prList = curStep.mergedPR;
+                result.created = time;
+            }
+            continue;
+        }
 
-        const newMergedPrIndexes = Array.from(item.mergedIndexes);
-        newMergedPrIndexes.push(item.prIndex);
-        //console.log('newMergedPrIndexes', newMergedPrIndexes)
+        if (curStep.files.size + curStep.needToMergeFilesCount < result.filesCount ) {
+            continue;
+        }
 
-        const newFilesCount = item.filesCount + pullRequests[item.prIndex].files.length;
-        //console.log("############", newFilesCount)
-
-        const newTimeCount = item.time + pullRequests[item.prIndex].created;
-        //console.log(newTimeCount, pullRequests[item.prIndex].created, newTimeCount < pullRequests[item.prIndex].created)
-
-        if (totalResult && item.confFilesCount + item.confFilesCount < totalResult.filesCount) continue;
-
-        let steps = 0;
-        let conflictFilesCount = item.confFilesCount;
-
-        if (totalResult && totalResult.prIndex === item.prIndex && totalResult.mergedIndexes.includes(item.prIndex)) continue;
-
-        for (let i = 0; i < pullRequests.length; i++) {
-            if (!newMergedPrIndexes.includes(i) && !doPRsConflict(pullRequests[i], pullRequests[item.prIndex])) {
-                //console.log("+++",item.filesCount)
-                const newFiles = item.files;
-                pullRequests[i].files.forEach(f => newFiles.add(f));
-                const newObj = {
-                    prIndex: i,
-                    mergedIndexes: Array.from(newMergedPrIndexes),
-                    filesCount: item.filesCount + pullRequests[i].files.length,
-                    files: newFiles,
-                    confFilesCount: conflictFilesCount - pullRequests[i].files.length,
-                    time: item.time + pullRequests[i].created,
-                }
-                const sum = ""
-                //if(newObj.prIndex === 1) console.log("++++", newObj.prIndex, newObj.mergedIndexes, newObj.filesCount, newObj.time)
-                console.log("++++", newObj.prIndex, newObj.mergedIndexes, newObj.filesCount, newObj.confFilesCount, newObj.time)
-                stack.push(newObj)
-
-                steps++;
+        // Merge
+        stack.push({
+            index: curStep.index + 1,
+            mergedPR: curStep.mergedPR,
+            files: new Set(curStep.files),
+            mergedFilesCount: curStep.mergedFilesCount,
+            needToMergeFilesCount: curStep.needToMergeFilesCount - curPR.files.length,
+        })
+        for (let i = 0; i < curPR.files.length; i++) {
+            const file = curPR.files[i];
+            if (curStep.files.has(file)) {
+                continue loop;
             } else {
-                //conflictFilesCount += pullRequests[i].files.length;
+                curStep.files.add(file);
             }
         }
 
-
-        if (steps === 0) {
-            console.log("finish")
-            const newObj = Object.assign({}, item);
-            newObj.mergedIndexes = newMergedPrIndexes
-                //.sort((a, b) => pullRequests[a].created - pullRequests[b].created);
-            newObj.filesCount = newFilesCount;
-            newObj.time = newTimeCount;
-
-            //console.log("Finish", item.filesCount)
-
-            //result.push(newObj)
-
-            if (totalResult) {
-
-                if (totalResult.filesCount - newObj.filesCount < 0) {
-                    totalResult = newObj;
-                } else if (newObj.filesCount === totalResult.filesCount && newObj.time < totalResult.time) {
-                    //console.log(newObj.time > totalResult.time)
-                    totalResult = newObj;
-                }
-
-            } else {
-                totalResult = newObj;
-            }
-
-        }
+        // No merge
+        stack.push({
+            index: curStep.index + 1,
+            mergedPR: curStep.mergedPR.concat([curPR]),
+            files: new Set(curStep.files),
+            mergedFilesCount: curStep.mergedFilesCount,
+            needToMergeFilesCount: curStep.needToMergeFilesCount - curPR.files.length,
+        })
 
     }
 
-    const superRes = totalResult.mergedIndexes
-        .sort((a,b) => pullRequests[a].created - pullRequests[b].created)
-        .map(item => pullRequests[item].id)
 
+    const answer = [...result.prList, ...ncPullRequests]
+        .sort((a, b) => a.created - b.created)
+        .map(item => item.id);
 
-    //return totalResult.mergedIndexes.map(index => pullRequests[index].id);
-
-    return superRes
+    return answer;
 
 }
