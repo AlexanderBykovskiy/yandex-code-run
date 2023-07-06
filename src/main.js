@@ -136,7 +136,7 @@ module.exports = function(html, css) {
     }
 
 
-    function getStyle (selector) {
+    function getStyle ({selector, stylesForChildren}) {
         const curStyles = getStylesBySelector(selector);
         //console.log("--", curStyles)
         let curStyleList = [];
@@ -148,17 +148,21 @@ module.exports = function(html, css) {
 
         })
 
-        return curStyleList.map(style => style.join(": ")).join("; ");
+        return {
+            currentStyles: curStyleList.map(style => style.join(": ")).join("; "),
+            stylesForChildren: stylesForChildren,
+        };
     }
 
 
-    function parser (element) {
+    function parser ({element, stylesForChildren}) {
 
         if (element.type === "ELEMENT") {
             //console.log("\n",element.tag)
-            element.styles = getStyle(element.tag);
+            const styles = getStyle({selector: element.tag, stylesForChildren})
+            element.styles = styles.currentStyles;
             element.children.forEach(item => {
-                parser(item);
+                parser({element:item, stylesForChildren: stylesForChildren});
             })
         }
 
@@ -166,7 +170,7 @@ module.exports = function(html, css) {
 
     }
 
-    parser(html);
+    parser({element: html, stylesForChildren: []});
 
     return html;
 
