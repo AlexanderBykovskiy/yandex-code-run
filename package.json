@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "serverstart": "npm-run-parallel watch serve",
-    "start": "npm-run-parallel watch serve",
+    "start-old": "npm-run-parallel watch serve",
+    "start": "node ./src/test.js",
     "build": "tsc",
     "watch": "tsc --watch",
     "serve": "serve ./"
