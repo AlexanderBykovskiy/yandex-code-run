@@ -149,4 +149,4 @@ const css = [
     }
 ];
 
-console.log(parser(html, css))
+console.log("\n=================== result ===================\n", parser(html, css))

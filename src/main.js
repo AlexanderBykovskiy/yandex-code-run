@@ -113,6 +113,12 @@ module.exports = function(html, css) {
     // });
 
 
+
+    // ARRAY TO STRING
+    function styleSerializer (stylesArr) {
+        return stylesArr.map(item => item.join(': ')).join("; ");
+    }
+
     // NEW STYLE LIST
     const styleList = css.map(item => {
         item.selector = item.selector.split(" ");
@@ -135,34 +141,58 @@ module.exports = function(html, css) {
         return styleList;
     }
 
+    function mergeFirstToSecond(firstStyles, secondStyles) {
+        const resultStyles = Array.from(secondStyles);
+        for (let i = 0; i < firstStyles.length; i++) {
+            const curStyleIndex = resultStyles.findIndex(item => item[0] === firstStyles[i][0]);
+            if (curStyleIndex >= 0) {
+                resultStyles[curStyleIndex][1] = firstStyles[i][1];
+            } else {
+                resultStyles.push(firstStyles[i]);
+            }
+        }
+        return resultStyles;
+    }
+
+
+
 
     function getStyle ({selector, stylesForChildren}) {
+
         const curStyles = getStylesBySelector(selector);
         //console.log("--", curStyles)
-        let curStyleList = [];
+        let curStyleList = Array.from(stylesForChildren);
+        let newStylesForChildren = [];
+
         curStyles.forEach(style => {
+
             // ONE SELECTOR
             if (style.selector.length === 1) {
-                curStyleList = curStyleList.concat(getStylesFromDeclaration(style.declarations))
+
+                const newStyles = getStylesFromDeclaration(style.declarations)
+                curStyleList = mergeFirstToSecond(newStyles, stylesForChildren);
+                newStylesForChildren = curStyleList;
             }
 
         })
 
         return {
-            currentStyles: curStyleList.map(style => style.join(": ")).join("; "),
-            stylesForChildren: stylesForChildren,
+            currentStyles: curStyleList,
+            stylesForChildren: newStylesForChildren,
         };
     }
 
 
-    function parser ({element, stylesForChildren}) {
+    function parser ({element, stylesForChildren, parent, level}) {
 
         if (element.type === "ELEMENT") {
-            //console.log("\n",element.tag)
-            const styles = getStyle({selector: element.tag, stylesForChildren})
-            element.styles = styles.currentStyles;
+            console.log("\n+++++++++++++++++++++\nTAG\n",element.tag)
+
+            const curStyles = getStyle({selector: element.tag, stylesForChildren})
+            element.styles = styleSerializer(curStyles.currentStyles);
+
             element.children.forEach(item => {
-                parser({element:item, stylesForChildren: stylesForChildren});
+                 parser({element: item, stylesForChildren: curStyles.stylesForChildren, parent: element, level: level + 1});
             })
         }
 
@@ -170,7 +200,7 @@ module.exports = function(html, css) {
 
     }
 
-    parser({element: html, stylesForChildren: []});
+    parser({element: html, stylesForChildren: [], parent: undefined, level: 1});
 
     return html;
 
