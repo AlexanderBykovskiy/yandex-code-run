@@ -24,6 +24,28 @@ export const html = {
         },
         {
             "type": "ELEMENT",
+            "tag": "tag",
+            "styles": {},
+            "children": [
+                {
+                    "type": "TEXT",
+                    "text": "TEXT"
+                }
+            ]
+        },
+        {
+            "type": "ELEMENT",
+            "tag": "tag",
+            "styles": {},
+            "children": [
+                {
+                    "type": "TEXT",
+                    "text": "TEXT"
+                }
+            ]
+        },
+        {
+            "type": "ELEMENT",
             "tag": "tag2",
             "styles": {},
             "children": [
@@ -56,6 +78,17 @@ export const html = {
             ]
         },
         {
+            "type": "ELEMENT",
+            "tag": "tag2",
+            "styles": {},
+            "children": [
+                {
+                    "type": "TEXT",
+                    "text": "TEXT"
+                }
+            ]
+        },
+        {
             "type": "TEXT",
             "text": "\n"
         }
@@ -80,7 +113,13 @@ export const css = [
     {
         "selector": "tag2",
         "declarations": {
-            "color": "rgb(0, 0, 255)",
+            "text-align": "right"
+        }
+    },
+    {
+        "selector": "tag + tag2",
+        "declarations": {
+            "color": "rgb(255, 255, 255)",
             "text-align": "right"
         }
     }
