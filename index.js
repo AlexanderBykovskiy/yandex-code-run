@@ -10,49 +10,32 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-function readMatrix(n, m) {
-
-    function readBoardLine() {
-        rl.question(`Введите строку чисел из ${m} (через пробел): `, (line) => {
-            const numbers = line.split(' ').map(Number);
+rl.on('line', (input) => {
+    if (!n || !m) {
+        const inputArr = input.split(' ').map(Number);
+        if (inputArr[0] && inputArr[1] && inputArr[0] <= 20 && inputArr[1] <= 20) {
+            n = inputArr[ 0 ];
+            m = inputArr[1];
+        } else {
+            console.log('Wrong N or M');
+        }
+    } else {
+        if (board.length < n) {
+            const numbers = input.split(' ').map(Number);
             if (numbers.length === m) {
-                board.push(numbers);
-            } else {
-                console.log('Некорректные данные');
+                board.push( numbers );
+                if (board.length === n) {
+                    rl.close();
+                    findBestRoad();
+                }
             }
-
-            if (board.length < n) {
-                readBoardLine();
-            } else {
-                rl.close();
-
-                console.log('Вы ввели следующую матрицу:');
-                console.log(board);
-            }
-        });
+        }
     }
 
-    readBoardLine();
+});
+
+function findBestRoad() {
+    console.log('result');
+    console.log(board);
+    console.log('FINISH');
 }
-
-
-function readNM() {
-
-    function readNMLine() {
-        rl.question('Введите N количество строк и M - столбцов (через пробел): ', (input) => {
-            [n, m] = input.split(' ').map(Number);
-            if (0 < n && n <= 20 && 0 < m && m <= 20) {
-                rl.close();
-                readMatrix(n, m);
-            } else {
-                console.log('Некорректные данные');
-                readNMLine();
-            }
-        });
-    }
-
-    readNMLine();
-}
-
-readNM();
-
